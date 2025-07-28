@@ -93,9 +93,12 @@ public class DinoHunterDB
 	{
 		using var db = await DatabaseManager.GetOpen();
 
-		using var cmd = new MySqlCommand($"SELECT * FROM `dh_leaderboard` ORDER BY hunterLv DESC LIMIT {Config.dhl};", db);
+        using var cmd = new MySqlCommand($@"
+			SELECT * FROM `dh_leaderboard` 
+			ORDER BY hunterLv DESC, exp DESC, combatpower DESC 
+			LIMIT {Config.dhl};", db);
 
-		using var reader = await cmd.ExecuteReaderAsync();
+        using var reader = await cmd.ExecuteReaderAsync();
 
 		var result = new List<DinoHunterAccount>();
 
