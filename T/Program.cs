@@ -1,3 +1,5 @@
+using T.TNet;
+
 namespace T;
 
 public static class Program
@@ -13,13 +15,18 @@ public static class Program
 
         await Db.DatabaseManager.Init();
 
-		GetApp(args).Run();
+		//TNetInstanceManager.CreateInstance(6759, 1);
+
+		//TNetInstanceManager.instances[0].Start();
+
+        GetApp(args).Run();
     }
 
 	static WebApplication GetApp(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
-		builder.WebHost.UseUrls(Config.hostUrl);
+		//builder.WebHost.UseUrls(Config.hostUrl);
+		builder.WebHost.UseUrls("http://127.0.0.4:85/");
 
 		builder.Services.AddControllers();
 		builder.Services.AddRazorPages();
@@ -28,7 +35,7 @@ public static class Program
 		builder.Logging.AddProvider(new Logging.DebugLoggerProvider());
 
 		var app = builder.Build();
-		app.UseStaticFiles();
+		//app.UseStaticFiles();
 
 		app.MapControllers();
 		app.MapRazorPages();

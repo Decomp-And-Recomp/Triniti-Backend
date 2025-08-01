@@ -1,4 +1,4 @@
-﻿namespace T;
+﻿namespace TNet;
 
 internal static class Debug
 {
@@ -15,10 +15,9 @@ internal static class Debug
                 LogError("File Writing is already started");
                 return;
             }
-
             fileWriteQueue = [];
 
-            string directoryPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!, "Logs");
+            string directoryPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!, "LogsTNet");
 
             if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
 
@@ -69,7 +68,6 @@ internal static class Debug
             string postMsg = time.ToString("[HH:mm:ss:fff] ") + msg;
 
             fileWriteQueue?.Add(postMsg);
-
             Console.ForegroundColor = color;
             Console.WriteLine(postMsg);
             Console.ForegroundColor = ConsoleColor.White;
@@ -153,5 +151,4 @@ internal static class Debug
         }
 //#endif
     }
-#pragma warning restore
 }

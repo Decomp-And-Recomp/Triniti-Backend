@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T", "T\T.csproj", "{56B383B7-0539-4BC3-88DF-37971FDB6F14}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNet", "TNet\TNet.csproj", "{4374E2C6-C33A-4F21-A10B-48695DE1461E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{56B383B7-0539-4BC3-88DF-37971FDB6F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56B383B7-0539-4BC3-88DF-37971FDB6F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56B383B7-0539-4BC3-88DF-37971FDB6F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4374E2C6-C33A-4F21-A10B-48695DE1461E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4374E2C6-C33A-4F21-A10B-48695DE1461E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4374E2C6-C33A-4F21-A10B-48695DE1461E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4374E2C6-C33A-4F21-A10B-48695DE1461E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

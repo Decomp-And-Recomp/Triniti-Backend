@@ -7,6 +7,10 @@ namespace T.Pages
     {
         public void OnGet()
         {
+            /*CookieOptions options = new();
+            options.Expires = DateTimeOffset.Now.AddMinutes(5);
+
+            Response.Cookies.Append("password", "myPass", options);*/
         }
     }
 }

@@ -1,0 +1,178 @@
+﻿@page
+@model T.Pages.DashboardModel
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        height: 100%;
+    }
+
+    .pageWrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin-left: 200px;
+    }
+
+    .content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .container {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 100vh;
+        background-color: #333;
+        gap: 5px;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .sidebar button {
+        width: 100%;
+        padding: 10px;
+        background-color: aliceblue;
+        color: black;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        border-radius: 3px;
+    }
+
+    .sidebar button:hover {
+        background-color: #999;
+    }
+
+    .sidebarBottom {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .logoutButton {
+        background-color: #FF0000 !important;
+        height: 30px;
+    }
+
+    .logoutButton:hover {
+        background-color: #750000 !important;
+    }
+
+    .newInstance {
+        background-color: #077000 !important;
+        height: 35px;
+    }
+
+    .newInstance:hover {
+        background-color: #044000 !important;
+    }
+
+    .scrollArea {
+        height: 650px;
+        overflow-y: auto;
+        background-color: black;
+        color: green;
+        font-size: 22px;
+        padding: 10px;
+    }
+
+    .horInput {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    footer {
+        background: #222;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+
+</style>
+<!-- Redo this code brother 😭😭😭-->
+@using T.TNet
+
+<div class="sidebar">
+    <form method="post" asp-page-handler="ChangeInstance">
+        @Html.AntiForgeryToken()
+        @for (int i = 0; i < TNetInstanceManager.instances.Count; i++)
+        {
+            <button type="submit" name="instanceId" value="@i">@TNetInstanceManager.instances[i].name</button>
+        }
+    </form>
+    <div class="sidebarBottom">
+        <form method="post" asp-page-handler="CreateInstance">
+            @Html.AntiForgeryToken()
+            <p style="color: white !important;">====================</p>
+            <p style="color: white !important;">Port:</p>
+            <input id="port"/>
+            <p style="color: white !important;">Name:</p>
+            <input id="name"/>
+            <p style="color: white !important;">Game ID:</p>
+            <input id="gameId"/>
+            <button type="submit" class="newInstance">New Instance</button>
+        </form>
+        <button class="logoutButton">Logout</button>
+    </div>
+</div>
+
+
+<div class="pageWrapper">
+    <div class="content">
+        <h2>@TNetInstanceManager.instances[Model.curInstanceId].name</h2>
+        <h1>-----------------------------------------------------------</h1>
+        @{
+            var v = TNetInstanceManager.instances[Model.curInstanceId];
+        }
+        <div class="horInput">
+            <p>PORT: </p> 
+            <input placeholder="@v.port" />
+            <p>|</p>
+            <p>GAME_ID: </p>
+            @if (@v.active)
+            {
+                <p>@v.gameId</p>
+            }
+            else
+            {
+                <input placeholder="@v.gameId" />
+            }
+            <p>|</p>
+            <p>ACTIVE: </p>
+            <input placeholder="@v.active.ToString()" />
+        </div>
+        <button class="logoutButton">Shutdown</button>
+        <button onclick="location.reload()">Refresh</button>
+        <h3>CONSOLE OUTPUT:</h3>
+        <div class="scrollArea">
+            @foreach (var vv in v.logs)
+            {
+                <p>@vv</p>
+            }
+        </div>
+    </div>
+
+    <footer>
+        coded by @@overmet15, tell this fucker if broken.
+        <!-- Yes i DO know that code is fucked but look, im coding HTML for the first time and i barely understand how razor works.-->
+    </footer>
+</div>

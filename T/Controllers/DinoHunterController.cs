@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using T.Db;
-using T.External.SimpleJSON;
 using T.Objects;
 
 namespace T.Controllers;
@@ -46,7 +45,7 @@ public class DinoHunterController : ControllerBase
 	[HttpPost("userHandler.insertLeaderboard")]
 	public async Task<IActionResult> InsertLeaderboard([FromForm] string? data)
 	{
-		if (data == null) return BadRequest();
+		if (data == null) return Content(missingData);
 
 		await DinoHunterDB.InsertLeaderboard(DinoHunterAccount.FromJson(data, true));
 
