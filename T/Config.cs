@@ -4,7 +4,7 @@ namespace T;
 
 internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 {
-	const string configPath = "config.json";
+	static string configPath = "config.json";
 
 	public static string mySqlConnectionString { get; private set; } = string.Empty;
 	public static string hostUrl { get; private set; } = string.Empty;
@@ -14,7 +14,9 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 
 	public static void Init()
 	{
-		if (!File.Exists(configPath))
+        configPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!, configPath);
+
+        if (!File.Exists(configPath))
 		{
 			Debug.Log("Unable to find config, loading defaults.");
 
@@ -22,7 +24,7 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 			return;
 		}
 
-		string configFile = File.ReadAllText(configPath);
+        string configFile = File.ReadAllText(configPath);
 
 		JSONNode index = JSON.Parse(configFile);
 
