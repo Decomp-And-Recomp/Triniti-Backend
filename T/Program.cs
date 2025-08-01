@@ -25,8 +25,8 @@ public static class Program
 	static WebApplication GetApp(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
-		//builder.WebHost.UseUrls(Config.hostUrl);
-		builder.WebHost.UseUrls("http://127.0.0.4:85/");
+		builder.WebHost.UseUrls(Config.hostUrl);
+		//builder.WebHost.UseUrls("http://127.0.0.4:85/");
 
 		builder.Services.AddControllers();
 		builder.Services.AddRazorPages();
