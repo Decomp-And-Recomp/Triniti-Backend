@@ -10,7 +10,7 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 	public static string hostUrl { get; private set; } = string.Empty;
 
 	//DH
-	public static int dhl { get; private set; }
+	public static int dhLeaderboardReturnAmount { get; private set; }
 
 	public static void Init()
 	{
@@ -32,21 +32,21 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 		hostUrl = index["hostUrl"];
 
 		// DH
-		dhl = index["dhl"];
+		dhLeaderboardReturnAmount = index["dhl"];
 	}
 
 	static void InitDefault()
 	{
 		mySqlConnectionString = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=Triniti;";
 		hostUrl = "http://127.0.0.1:7125";
-		dhl = 20;
+		dhLeaderboardReturnAmount = 20;
 
 		JSONObject index = new();
 
 		index["mySqlConnectionString"] = mySqlConnectionString;
 		index["hostUrl"] = hostUrl;
 
-		index["dhl"] = dhl;
+		index["dhl"] = dhLeaderboardReturnAmount;
 
 		if (File.Exists(configPath)) File.Delete(configPath);
 

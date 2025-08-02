@@ -96,7 +96,7 @@ public class DinoHunterDB
         using var cmd = new MySqlCommand($@"
 			SELECT * FROM `dh_leaderboard` 
 			ORDER BY hunterLv DESC, exp DESC, combatpower DESC 
-			LIMIT {Config.dhl};", db);
+			LIMIT {Config.dhLeaderboardReturnAmount};", db);
 
         using var reader = await cmd.ExecuteReaderAsync();
 
