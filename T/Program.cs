@@ -1,5 +1,3 @@
-using T.TNet;
-
 namespace T;
 
 public static class Program
@@ -15,10 +13,6 @@ public static class Program
 
         await Db.DatabaseManager.Init();
 
-		//TNetInstanceManager.CreateInstance(6759, 1);
-
-		//TNetInstanceManager.instances[0].Start();
-
         GetApp(args).Run();
     }
 
@@ -29,16 +23,13 @@ public static class Program
 		//builder.WebHost.UseUrls("http://127.0.0.4:85/");
 
 		builder.Services.AddControllers();
-		builder.Services.AddRazorPages();
 
 		builder.Logging.ClearProviders();
 		builder.Logging.AddProvider(new Logging.DebugLoggerProvider());
 
 		var app = builder.Build();
-		//app.UseStaticFiles();
 
 		app.MapControllers();
-		app.MapRazorPages();
 
 		return app;
 	}
