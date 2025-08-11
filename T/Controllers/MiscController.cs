@@ -24,5 +24,11 @@ namespace T.Controllers
 
             return Content(index.ToJsonString());
         }
+
+        [HttpGet("getTimeMs")]
+        public IActionResult GetTimeMs()
+        {
+            return Content(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
+        }
     }
 }
