@@ -56,7 +56,12 @@ internal class DatabaseManager
 		result.Append("`gold` INT NOT NULL,");
 		result.Append("`applause` INT NOT NULL");
 		result.Append(");"); // closing
-		/*
+
+        result.AppendLine("CREATE TABLE IF NOT EXISTS `filter`");
+        result.Append('('); // opening
+        result.Append("`badword` VARCHAR(12) NOT NULL");
+        result.Append(");"); // closing
+        /*
 		// accounts
 		result.AppendLine("CREATE TABLE IF NOT EXISTS `accounts`");
 		result.Append("("); // opening
@@ -93,6 +98,6 @@ internal class DatabaseManager
 		result.Append(");"); // closing
 		*/
 
-		return result.ToString();
+        return result.ToString();
 	}
 }
