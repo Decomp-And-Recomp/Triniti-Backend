@@ -7,7 +7,7 @@ public static class Program
 		Console.InputEncoding = System.Text.Encoding.UTF8;
 		Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-		_ = Debug.StartFileWriting();
+		//_ = Debug.StartFileWriting();
 
 		Config.Init();
 
