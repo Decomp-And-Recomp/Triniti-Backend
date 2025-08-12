@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Text;
+using System.Text.Json.Nodes;
+using System.Xml;
 using T.External.SimpleJSON;
 
 namespace T.Objects;
@@ -58,4 +60,61 @@ public class DinoHunterAccount
 
 		return index;
 	}
+
+	public string? GetMottoFromExts()
+	{
+		if (exts == null) return null;
+
+        try
+        {
+			// substring is a bandaid fix
+            string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts)).Substring(1);
+            XmlDocument doc = new();
+            doc.LoadXml(xml);
+
+            var cncPack = doc["CNCPack"];
+            if (cncPack == null) return null;
+
+            var sign = cncPack["sign"];
+            if (sign == null) return null;
+
+            return sign.InnerText;
+        }
+        catch (Exception ex)
+        {
+			Debug.Log(Encoding.UTF8.GetString(Convert.FromBase64String(exts)), ConsoleColor.DarkYellow);
+			Debug.Log(exts, ConsoleColor.DarkRed);
+			Debug.LogException(ex);
+        }
+
+        return "Internal Error";
+    }
+
+	public void SetMottoToExts(string motto)
+	{
+		if (exts == null) return;
+		try
+        {
+            // substring is a bandaid fix
+            string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts)).Substring(1);
+            XmlDocument doc = new();
+            doc.LoadXml(xml);
+
+            var cncPack = doc["CNCPack"];
+            if (cncPack == null) return;
+
+            var sign = cncPack["sign"];
+            if (sign == null) return;
+
+            sign.InnerText = motto;
+
+            exts = Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
+        }
+		catch (Exception ex)
+        {
+            Debug.Log(Encoding.UTF8.GetString(Convert.FromBase64String(exts)), ConsoleColor.DarkYellow);
+            Debug.Log(exts, ConsoleColor.DarkRed);
+            Debug.LogException(ex);
+        }
+    }
 }

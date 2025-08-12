@@ -19,7 +19,11 @@ public class DinoHunterController : ControllerBase
 	{
 		if (data == null) return Content(missingData);
 
-		await DinoHunterDB.SaveUser(DinoHunterAccount.FromJson(data, false));
+		var account = DinoHunterAccount.FromJson(data, false);
+
+		await FilterDB.Filter(account);
+
+        await DinoHunterDB.SaveUser(account);
 
 		return Ok();
 	}
@@ -47,7 +51,11 @@ public class DinoHunterController : ControllerBase
 	{
 		if (data == null) return Content(missingData);
 
-		await DinoHunterDB.InsertLeaderboard(DinoHunterAccount.FromJson(data, true));
+		var account = DinoHunterAccount.FromJson(data, true);
+
+		await FilterDB.Filter(account);
+
+        await DinoHunterDB.InsertLeaderboard(account);
 
 		return Ok();
 	}
