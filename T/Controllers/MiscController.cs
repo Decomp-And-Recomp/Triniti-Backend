@@ -1,34 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 
-namespace T.Controllers
+namespace T.Controllers;
+
+[Route("api/misc")]
+[ApiController]
+public class MiscController : ControllerBase
 {
-    [Route("api/misc")]
-    [ApiController]
-    public class MiscController : ControllerBase
+    [HttpGet("getTime")]
+    public IActionResult GetTime()
     {
-        [HttpGet("getTime")]
-        public IActionResult GetTime()
+        DateTime time = DateTime.UtcNow;
+
+        JsonObject index = new()
         {
-            DateTime time = DateTime.UtcNow;
+            ["year"] = time.Year,
+            ["month"] = time.Month,
+            ["day"] = time.Day,
+            ["hour"] = time.Hour,
+            ["minute"] = time.Minute,
+            ["second"] = time.Second
+        };
 
-            JsonObject index = new()
-            {
-                ["year"] = time.Year,
-                ["month"] = time.Month,
-                ["day"] = time.Day,
-                ["hour"] = time.Hour,
-                ["minute"] = time.Minute,
-                ["second"] = time.Second
-            };
+        return Content(index.ToJsonString());
+    }
 
-            return Content(index.ToJsonString());
-        }
-
-        [HttpGet("getTimeMs")]
-        public IActionResult GetTimeMs()
-        {
-            return Content(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
-        }
+    [HttpGet("getTimeMs")]
+    public IActionResult GetTimeMs()
+    {
+        return Content(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
     }
 }
