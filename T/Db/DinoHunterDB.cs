@@ -86,7 +86,7 @@ public class DinoHunterDB
 
 		var rowsAffected = await cmd.ExecuteNonQueryAsync();
 
-		Debug.Log($"Updated leaderboard for user: {account.userId}. Rows Affected: {rowsAffected}.");
+		//Debug.Log($"Updated leaderboard for user: {account.userId}. Rows Affected: {rowsAffected}.");
 	}
 
 	public async static Task<List<DinoHunterAccount>> ListLeaderboard()

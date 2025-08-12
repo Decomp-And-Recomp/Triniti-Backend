@@ -61,42 +61,6 @@ internal class DatabaseManager
         result.Append('('); // opening
         result.Append("`badword` VARCHAR(12) NOT NULL");
         result.Append(");"); // closing
-        /*
-		// accounts
-		result.AppendLine("CREATE TABLE IF NOT EXISTS `accounts`");
-		result.Append("("); // opening
-		result.Append("`id` BIGINT AUTO_INCREMENT PRIMARY KEY,");
-		result.Append("`nick` VARCHAR(255) NOT NULL,");
-		result.Append("`skin` VARCHAR(255) NOT NULL,");
-		result.Append("`token` VARCHAR(255) NOT NULL,");
-		result.Append("`device` VARCHAR(255) NOT NULL,");
-		result.Append("`rank` INT NOT NULL DEFAULT '0',");
-		result.Append("`paying` BOOLEAN NOT NULL DEFAULT '0',");
-		result.Append("`developer` BOOLEAN NOT NULL DEFAULT '0',");
-		result.Append("`banned` BOOLEAN NOT NULL DEFAULT 0,");
-		result.Append("`RatingDeathmatch` INT NOT NULL DEFAULT '0',");
-		result.Append("`RatingTeamBattle` INT NOT NULL DEFAULT '0',");
-		result.Append("`RatingHunger` INT NOT NULL DEFAULT '0',");
-		result.Append("`RatingCapturePoint` INT NOT NULL DEFAULT '0'");
-		result.Append(");"); // closing
-
-		// badfilter
-		result.AppendLine("CREATE TABLE IF NOT EXISTS `badfilter`(`value` tinytext NOT NULL);");
-
-		// config
-		result.AppendLine("CREATE TABLE IF NOT EXISTS `config`");
-		result.Append("("); // opening
-		result.Append("`key` VARCHAR(255) NOT NULL,");
-		result.Append("`value` VARCHAR(255) NOT NULL");
-		result.Append(");"); // closing
-
-		// friend_requests
-		result.AppendLine("CREATE TABLE IF NOT EXISTS `friend_requests`");
-		result.Append("("); // opening
-		result.Append("`from` BIGINT NOT NULL,");
-		result.Append("`to` BIGINT NOT NULL");
-		result.Append(");"); // closing
-		*/
 
         return result.ToString();
 	}
