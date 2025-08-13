@@ -22,11 +22,11 @@ public class DinoHunterController : ControllerBase
 		StreamReader reader = new(Request.Body);
 		string data = await reader.ReadToEndAsync();
 
-		if (string.IsNullOrEmpty(data)) return Content(missingData);
+		if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
 
         var account = DinoHunterAccount.FromJson(data, false);
 
@@ -39,23 +39,23 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(missingData);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
 
 		JsonNode? jsonData = JsonNode.Parse(data);
 		if (jsonData == null) return Ok(unableToParseData);
 
 		JsonNode? userid = jsonData["userId"];
-		if (userid == null) return Content(dataMissesNeededValues);
+		if (userid == null) return Content(Encrypt(dataMissesNeededValues));
 
 		DinoHunterAccount? user = await DinoHunterDB.LoadUser(userid.ToString());
 
 		if (user == null) return Content(userNotFound);
 
-		return Content(XXTEAUtils.Encrypt(user.ToJson(true).ToJsonString(), Config.encryptionKey));
+		return Content(Encrypt(user.ToJson(true).ToJsonString()));
 	}
 
 	[HttpPost("userHandler.insertLeaderboard")]
@@ -64,11 +64,11 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(missingData);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
 
         var account = DinoHunterAccount.FromJson(data, true);
 
@@ -85,17 +85,17 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(missingData);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
 
         JsonNode? jsonData = JsonNode.Parse(data);
-        if (jsonData == null) return Content(unableToParseData);
+        if (jsonData == null) return Content(Encrypt(unableToParseData));
 
         JsonNode? userId = jsonData["userId"];
-        if (userId == null) return Content(dataMissesNeededValues);
+        if (userId == null) return Content(Encrypt(dataMissesNeededValues));
 
         JsonObject resultIndex = new()
         {
@@ -104,9 +104,7 @@ public class DinoHunterController : ControllerBase
             ["myrank"] = await DinoHunterDB.GetPlaceFor(userId.ToString())
         };
 
-		string s = XXTEAUtils.Encrypt(resultIndex.ToString(), Config.encryptionKey);
-		Debug.LogInfo(s);
-        return Content(s);
+        return Content(Encrypt(resultIndex.ToString()));
 	}
 
 	JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
@@ -126,5 +124,10 @@ public class DinoHunterController : ControllerBase
 		}
 
 		return result;
+	}
+
+	string Encrypt(string str)
+	{
+		return XXTEAUtils.Encrypt(str, Config.encryptionKey);
 	}
 }
