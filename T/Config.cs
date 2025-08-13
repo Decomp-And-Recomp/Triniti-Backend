@@ -8,6 +8,7 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 
 	public static string mySqlConnectionString { get; private set; } = string.Empty;
 	public static string hostUrl { get; private set; } = string.Empty;
+	public static string encryptionKey { get; private set; } = string.Empty;
 
 	//DH
 	public static int dhLeaderboardReturnAmount { get; private set; }
@@ -31,8 +32,13 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 		mySqlConnectionString = index["mySqlConnectionString"];
 		hostUrl = index["hostUrl"];
 
-		// DH
-		dhLeaderboardReturnAmount = index["dhl"];
+        JSONObject defaultEncryptionkey = new();
+		defaultEncryptionkey.Value = "ExampleKey";
+
+		encryptionKey = index.GetValueOrDefault("encryptionKey", defaultEncryptionkey);
+
+        // DH
+        dhLeaderboardReturnAmount = index["dhl"];
 	}
 
 	static void InitDefault()
@@ -47,6 +53,9 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 		index["hostUrl"] = hostUrl;
 
 		index["dhl"] = dhLeaderboardReturnAmount;
+
+        encryptionKey = "EncryptionKey";
+        index["encryptionKey"] = encryptionKey;
 
 		if (File.Exists(configPath)) File.Delete(configPath);
 

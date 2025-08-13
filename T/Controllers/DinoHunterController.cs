@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using T.Db;
+using T.External;
 using T.Objects;
 
 namespace T.Controllers;
@@ -13,25 +14,36 @@ public class DinoHunterController : ControllerBase
 	const string unableToParseData = "{ \"code\": \"2\" }";
 	const string dataMissesNeededValues = "{ \"code\": \"3\" }";
 	const string userNotFound = "{ \"code\": \"4\" }";
+	const string encryptionError = "{ \"code\": \"5\" }";
 
 	[HttpPost("userHandler.saveUser")]
-	public async Task<IActionResult> SaveUser([FromForm] string? data)
+	public async Task<IActionResult> SaveUser()
 	{
-		if (data == null) return Content(missingData);
+		StreamReader reader = new(Request.Body);
+		string data = await reader.ReadToEndAsync();
 
-		var account = DinoHunterAccount.FromJson(data, false);
+		if (string.IsNullOrEmpty(data)) return Content(missingData);
 
-		await FilterDB.Filter(account);
+        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        await DinoHunterDB.SaveUser(account);
+        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+
+        var account = DinoHunterAccount.FromJson(data, false);
 
 		return Ok();
 	}
 
 	[HttpPost("userHandler.loadUser")]
-	public async Task<IActionResult> LoadUser([FromForm] string? data)
-	{
-		if (data == null) return Content(missingData);
+	public async Task<IActionResult> LoadUser()
+    {
+        StreamReader reader = new(Request.Body);
+        string data = await reader.ReadToEndAsync();
+
+        if (string.IsNullOrEmpty(data)) return Content(missingData);
+
+        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+
+        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
 
 		JsonNode? jsonData = JsonNode.Parse(data);
 		if (jsonData == null) return Ok(unableToParseData);
@@ -43,15 +55,22 @@ public class DinoHunterController : ControllerBase
 
 		if (user == null) return Content(userNotFound);
 
-		return Content(user.ToJson(true).ToJsonString());
+		return Content(XXTEAUtils.Encrypt(user.ToJson(true).ToJsonString(), Config.encryptionKey));
 	}
 
 	[HttpPost("userHandler.insertLeaderboard")]
-	public async Task<IActionResult> InsertLeaderboard([FromForm] string? data)
-	{
-		if (data == null) return Content(missingData);
+	public async Task<IActionResult> InsertLeaderboard()
+    {
+        StreamReader reader = new(Request.Body);
+        string data = await reader.ReadToEndAsync();
 
-		var account = DinoHunterAccount.FromJson(data, true);
+        if (string.IsNullOrEmpty(data)) return Content(missingData);
+
+        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+
+        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+
+        var account = DinoHunterAccount.FromJson(data, true);
 
 		await FilterDB.Filter(account);
 
@@ -61,23 +80,33 @@ public class DinoHunterController : ControllerBase
 	}
 
 	[HttpPost("userHandler.listLeaderboard")]
-	public async Task<IActionResult> ListLeaderboard([FromForm] string? data)
-	{
-		if (data == null) return Content(missingData);
-		JsonNode? jsonData = JsonNode.Parse(data);
-		if (jsonData == null) return Content(unableToParseData);
+	public async Task<IActionResult> ListLeaderboard()
+    {
+        StreamReader reader = new(Request.Body);
+        string data = await reader.ReadToEndAsync();
 
-		JsonNode? userId = jsonData["userId"];
-		if (userId == null) return Content(dataMissesNeededValues);
+        if (string.IsNullOrEmpty(data)) return Content(missingData);
 
-		JsonObject resultIndex = new()
-		{
-			["code"] = "0",
-			["leaderboards"] = UserListToLeaderboard(await DinoHunterDB.ListLeaderboard()),
-			["myrank"] = await DinoHunterDB.GetPlaceFor(userId.ToString())
-		};
+        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-		return Content(resultIndex.ToString());
+        if (string.IsNullOrEmpty(data)) return Content(encryptionError);
+
+        JsonNode? jsonData = JsonNode.Parse(data);
+        if (jsonData == null) return Content(unableToParseData);
+
+        JsonNode? userId = jsonData["userId"];
+        if (userId == null) return Content(dataMissesNeededValues);
+
+        JsonObject resultIndex = new()
+        {
+            ["code"] = "0",
+            ["leaderboards"] = UserListToLeaderboard(await DinoHunterDB.ListLeaderboard()),
+            ["myrank"] = await DinoHunterDB.GetPlaceFor(userId.ToString())
+        };
+
+		string s = XXTEAUtils.Encrypt(resultIndex.ToString(), Config.encryptionKey);
+		Debug.LogInfo(s);
+        return Content(s);
 	}
 
 	JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
