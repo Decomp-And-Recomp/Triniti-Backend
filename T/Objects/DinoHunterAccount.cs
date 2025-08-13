@@ -108,7 +108,7 @@ public class DinoHunterAccount
 
             sign.InnerText = motto;
 
-            exts = Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
+            exts = "77u/\n" + Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
         }
 		catch (Exception ex)
         {
