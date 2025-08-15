@@ -39,16 +39,16 @@ internal class DatabaseManager
 		result.AppendLine("CREATE TABLE IF NOT EXISTS `dh_accounts`");
 		result.Append('('); // opening
 		result.Append("`userid` VARCHAR(100) UNIQUE NOT NULL,");
-		result.Append("`nickname` VARCHAR(255) NOT NULL,");
+		result.Append("`nickname` VARCHAR(12) NOT NULL,");
 		result.Append("`title` SMALLINT UNSIGNED NOT NULL,");
-		result.Append("`exts` VARCHAR(2000) NOT NULL");
+		result.Append("`exts` VARCHAR(1000) NOT NULL");
 		result.Append(");"); // closing
 
 		// DINO HUNTER LEADERBOARD
 		result.AppendLine("CREATE TABLE IF NOT EXISTS `dh_leaderboard`");
 		result.Append('('); // opening
 		result.Append("`userid` VARCHAR(100) UNIQUE NOT NULL,");
-		result.Append("`nickname` VARCHAR(255) NOT NULL,");
+		result.Append("`nickname` VARCHAR(12) NOT NULL,");
 		result.Append("`combatpower` INT NOT NULL,");
 		result.Append("`exp` INT NOT NULL,");
 		result.Append("`hunterLv` INT NOT NULL,");
