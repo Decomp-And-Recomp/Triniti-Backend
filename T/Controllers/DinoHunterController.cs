@@ -30,6 +30,10 @@ public class DinoHunterController : ControllerBase
 
         var account = DinoHunterAccount.FromJson(data, false);
 
+		await FilterDB.Filter(account);
+
+		await DinoHunterDB.SaveUser(account);
+
 		return Ok();
 	}
 
