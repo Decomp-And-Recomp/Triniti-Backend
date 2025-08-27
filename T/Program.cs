@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.HttpOverrides;
+
 namespace T;
 
 public static class Program
@@ -6,6 +8,8 @@ public static class Program
 	{
 		Console.InputEncoding = System.Text.Encoding.UTF8;
 		Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+		Console.CursorVisible = false;
 
 		//_ = Debug.StartFileWriting();
 
@@ -29,7 +33,15 @@ public static class Program
 
 		var app = builder.Build();
 
-		app.MapControllers();
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
+
+		app.UseMiddleware<Middleware>();
+
+        app.UseAuthorization();
+        app.MapControllers();
 
 		return app;
 	}

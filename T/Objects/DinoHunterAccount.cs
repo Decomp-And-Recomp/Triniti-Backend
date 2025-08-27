@@ -28,8 +28,11 @@ public class DinoHunterAccount
 
 		result.userId = index["userId"];
 		result.nickname = index["nickName"]; // yes its right, nickName
-		
-		if (leaderboard)
+
+		if (string.IsNullOrWhiteSpace(result.userId)) throw new Exception("Cannot process operations with no userId");
+		if (string.IsNullOrWhiteSpace(result.nickname)) result.nickname = "empty";
+
+        if (leaderboard)
 		{
 			result.combatpower = index["combatpower"];
 			result.exp = index["exp"];
@@ -68,7 +71,7 @@ public class DinoHunterAccount
         try
         {
 			// substring is a bandaid fix
-            string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts)).Substring(1);
+            string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts))[1..];
             XmlDocument doc = new();
             doc.LoadXml(xml);
 
@@ -108,6 +111,8 @@ public class DinoHunterAccount
 
             sign.InnerText = motto;
 
+			// exts uploaded by game has the "77u\n (yes its new line)" at begenning? but when adding it manualy causes exception on game?
+			// meh, works fine rn so i wont even bother debugging it.
             //exts = "77u/\n" + Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
             exts = Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
         }

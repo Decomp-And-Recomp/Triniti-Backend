@@ -5,17 +5,18 @@ namespace T.Db;
 
 public class DinoHunterDB
 {
-	public static async Task SaveUser(DinoHunterAccount account)
+	public static async Task SaveUser(DinoHunterAccount account, string? ip)
 	{
 		using var db = await DatabaseManager.GetOpen();
 
 		const string sql = @"
-		INSERT INTO `dh_accounts` (userid, nickname, title, exts)
-		VALUES (@userid, @nickname, @title, @exts)
+		INSERT INTO `dh_accounts` (userid, nickname, title, exts, ip)
+		VALUES (@userid, @nickname, @title, @exts, @ip)
 		ON DUPLICATE KEY UPDATE 
 			nickname = VALUES(nickname),
 			title = VALUES(title),
-			exts = VALUES(exts);";
+			exts = VALUES(exts),
+			ip = VALUES(ip);";
 
 		using var cmd = new MySqlCommand(sql, db);
 
@@ -23,6 +24,7 @@ public class DinoHunterDB
 		cmd.Parameters.AddWithValue("@nickname", account.nickname);
 		cmd.Parameters.AddWithValue("@title", account.title);
 		cmd.Parameters.AddWithValue("@exts", account.exts);
+		cmd.Parameters.AddWithValue("@ip", ip);
 
 		var rowsAffected = await cmd.ExecuteNonQueryAsync();
 
@@ -124,14 +126,22 @@ public class DinoHunterDB
 	{
 		using var db = await DatabaseManager.GetOpen();
 
-		const string sql = @"
-		SELECT COUNT(*) + 1 AS place
-		FROM dh_leaderboard
-		WHERE hunterLv > (
-			SELECT hunterLv FROM dh_leaderboard WHERE userid = @userId
-		);";
+        const string sql = @"
+        SELECT COUNT(*) + 1 AS place
+        FROM dh_leaderboard
+        WHERE 
+            (hunterLv > (SELECT hunterLv FROM dh_leaderboard WHERE userid = @userId))
+            OR (
+                hunterLv = (SELECT hunterLv FROM dh_leaderboard WHERE userid = @userId)
+                AND exp > (SELECT exp FROM dh_leaderboard WHERE userid = @userId)
+            )
+            OR (
+                hunterLv = (SELECT hunterLv FROM dh_leaderboard WHERE userid = @userId)
+                AND exp = (SELECT exp FROM dh_leaderboard WHERE userid = @userId)
+                AND combatpower > (SELECT combatpower FROM dh_leaderboard WHERE userid = @userId)
+            );";
 
-		using var cmd = new MySqlCommand(sql, db);
+        using var cmd = new MySqlCommand(sql, db);
 		cmd.Parameters.AddWithValue("@userId", userId);
 
 		var result = await cmd.ExecuteScalarAsync();

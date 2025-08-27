@@ -1,5 +1,6 @@
 ﻿namespace T;
 
+// ToDo: rewrite (2026)
 internal static class Debug
 {
     static readonly object logLock = new();
@@ -98,13 +99,7 @@ internal static class Debug
         }
     }
 
-    ///<summary>Logs a 'DEBUG' BUILD ONLY log</summary>
-    public static void LogInfo(object msg, ConsoleColor color = ConsoleColor.Cyan)
-    {
-#if DEBUG
-        Log(msg, color);
-#endif
-    }
+    public static void LogInfo(object? msg, ConsoleColor color = ConsoleColor.Cyan) => Log(msg, color);
 
     ///<summary>Logs message and stack trace</summary>
     public static void LogWarning(object msg)
@@ -135,7 +130,6 @@ internal static class Debug
         if (includeStackTrace) Log($"[stack trace]: {ex.StackTrace}", ConsoleColor.Red);
     }
 
-#pragma warning disable
     public static void LogStack(ConsoleColor color = ConsoleColor.White)
     {
 //#if DEBUG
@@ -143,10 +137,20 @@ internal static class Debug
 
         for (int i = 1; i < stackTrace.FrameCount; i++) // yes i is supposed to start with 1
         {
-            System.Diagnostics.StackFrame callerFrame = stackTrace.GetFrame(i);
+            var callerFrame = stackTrace.GetFrame(i);
 
-            string methodName = callerFrame.GetMethod().Name;
-            string className = callerFrame.GetMethod().DeclaringType.FullName;
+            if (callerFrame == null) continue;
+
+            var method = callerFrame.GetMethod();
+
+            if (method == null) continue;
+
+            string methodName = method.Name;
+
+            if (method.DeclaringType == null) continue;
+            if (method.DeclaringType.FullName == null) continue;
+
+            string className = method.DeclaringType.FullName;
             int line = callerFrame.GetFileLineNumber();
 
             Log($"{className}.{methodName}:{line}", color);
