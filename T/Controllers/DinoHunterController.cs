@@ -32,7 +32,7 @@ public class DinoHunterController : ControllerBase
 
 		await FilterDB.Filter(account);
 
-		await DinoHunterDB.SaveUser(account, WebUtils.GetIp(Request.HttpContext));
+		await DinoHunterDB.SaveUser(account, Utils.GetIp(Request.HttpContext));
 
 		return Ok();
 	}

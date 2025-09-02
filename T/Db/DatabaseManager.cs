@@ -65,7 +65,8 @@ internal class DatabaseManager
 
         result.AppendLine("CREATE TABLE IF NOT EXISTS `ip_bans`");
         result.Append('('); // opening
-        result.Append("`ip` VARCHAR(15) NOT NULL");
+        result.Append("`ip` VARCHAR(64) NOT NULL,");
+        result.Append("`reason` VARCHAR(255) NOT NULL");
         result.Append(");"); // closing
 
         return result.ToString();

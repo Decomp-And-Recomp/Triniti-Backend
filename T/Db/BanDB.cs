@@ -18,5 +18,5 @@ public static class BanDB
     }
 
     public static async Task<bool> IsBanned(HttpContext context)
-        => await IsBanned(WebUtils.GetIp(context));
+        => await IsBanned(Utils.GetIp(context));
 }

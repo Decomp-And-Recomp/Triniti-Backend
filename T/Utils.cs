@@ -1,6 +1,9 @@
-﻿namespace T;
+﻿using System.Security.Cryptography;
+using System.Text;
 
-public class WebUtils
+namespace T;
+
+public class Utils
 {
     public static string? GetIp(HttpContext context)
     {
@@ -15,6 +18,9 @@ public class WebUtils
             ip = ipAddr.IsIPv4MappedToIPv6 ? ipAddr.MapToIPv4().ToString() : ipAddr.ToString();
         }
 
-        return ip;
+        return Hash(ip);
     }
+
+    public static string Hash(string input)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(input)));
 }
