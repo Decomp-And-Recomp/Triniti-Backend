@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Principal;
 using System.Text.Json.Nodes;
 using T.Db;
 using T.External;
@@ -14,12 +13,7 @@ public class DinoHunterController : ControllerBase
 	[HttpPost("userHandler.saveUser")]
 	public async Task<IActionResult> SaveUser()
 	{
-		StreamReader reader = new(Request.Body);
-		string data = await reader.ReadToEndAsync();
-
-		if (string.IsNullOrEmpty(data)) return BadRequest();
-
-        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+        string data = await Utils.ReadEncryptedBody(Request);
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
@@ -37,12 +31,7 @@ public class DinoHunterController : ControllerBase
 	[HttpPost("userHandler.loadUser")]
 	public async Task<IActionResult> LoadUser()
     {
-        StreamReader reader = new(Request.Body);
-        string data = await reader.ReadToEndAsync();
-
-        if (string.IsNullOrEmpty(data)) return BadRequest();
-
-        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+        string data = await Utils.ReadEncryptedBody(Request);
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
@@ -57,18 +46,13 @@ public class DinoHunterController : ControllerBase
 
 		if (user == null) return BadRequest();
 
-        return Content(Encrypt(user.ToJson(true).ToJsonString()));
+        return Content(Utils.Encrypt(user.ToJson().ToJsonString()));
 	}
 
 	[HttpPost("userHandler.insertLeaderboard")]
 	public async Task<IActionResult> InsertLeaderboard()
     {
-        StreamReader reader = new(Request.Body);
-        string data = await reader.ReadToEndAsync();
-
-        if (string.IsNullOrEmpty(data)) return BadRequest();
-
-        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+        string data = await Utils.ReadEncryptedBody(Request);
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
@@ -85,12 +69,7 @@ public class DinoHunterController : ControllerBase
 	[HttpPost("userHandler.listLeaderboard")]
 	public async Task<IActionResult> ListLeaderboard()
     {
-        StreamReader reader = new(Request.Body);
-        string data = await reader.ReadToEndAsync();
-
-        if (string.IsNullOrEmpty(data)) return BadRequest();
-
-        data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
+        string data = await Utils.ReadEncryptedBody(Request);
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
@@ -108,7 +87,7 @@ public class DinoHunterController : ControllerBase
             ["myrank"] = await DinoHunterDB.GetPlaceFor(userId.ToString())
         };
 
-        return Content(Encrypt(resultIndex.ToString()));
+        return Content(Utils.Encrypt(resultIndex.ToString()));
 	}
 
 	JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
@@ -128,10 +107,5 @@ public class DinoHunterController : ControllerBase
 		}
 
 		return result;
-	}
-
-	string Encrypt(string str)
-	{
-		return XXTEAUtils.Encrypt(str, Config.encryptionKey);
 	}
 }

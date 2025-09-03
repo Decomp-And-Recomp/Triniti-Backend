@@ -8,9 +8,17 @@ namespace T.Objects;
 public class DinoHunterAccount
 {
 	// SV = save request, LB = leaderboard request
+
+	/// <summary>
+	/// HWID of the person.
+	/// </summary>
 	public string? userId; // SV | LB
 	public string? nickname; // SV | LB
 	public int? title; // SV
+
+	/// <summary>
+	/// Base64 string of a UTF8 encoded XML (yes)
+	/// </summary>
 	public string? exts; // SV
 
 	public int? combatpower; // LB
@@ -50,11 +58,11 @@ public class DinoHunterAccount
 		return result;
 	}
 
-	public JsonObject ToJson(bool includeCode)
+	public JsonObject ToJson()
 	{
 		JsonObject index = new();
 
-		if (includeCode) index["code"] = "0";
+		index["code"] = "0";
 
 		if (userId != null) index["userId"] = userId;
 		if (nickname != null) index["nickName"] = nickname; // yes, nickName

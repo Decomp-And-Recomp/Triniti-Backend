@@ -1,9 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using T.External;
 
 namespace T;
 
-public class Utils
+public static class Utils
 {
     public static string? GetIp(HttpContext context)
     {
@@ -23,4 +25,17 @@ public class Utils
 
     public static string Hash(string input)
         => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(input)));
+
+    public static async Task<string> ReadEncryptedBody(HttpRequest request)
+    {
+        StreamReader reader = new(request.Body);
+        string data = await reader.ReadToEndAsync();
+
+        return XXTEAUtils.Decrypt(data, Config.encryptionKey);
+    }
+
+    public static string Encrypt(string str)
+    {
+        return XXTEAUtils.Encrypt(str, Config.encryptionKey);
+    }
 }
