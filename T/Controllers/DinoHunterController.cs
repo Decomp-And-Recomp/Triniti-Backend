@@ -36,9 +36,8 @@ public class DinoHunterController : ControllerBase
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
         JsonNode? jsonData = JsonNode.Parse(data);
-		if (jsonData == null) return BadRequest();
+        JsonNode? userid = jsonData?["userId"];
 
-        JsonNode? userid = jsonData["userId"];
 		if (userid == null) return BadRequest();
         if (await BanDB.IsHWIDBanned(userid.ToString())) return BadRequest();
 
