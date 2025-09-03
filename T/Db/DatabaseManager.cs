@@ -42,7 +42,7 @@ internal class DatabaseManager
 		result.Append("`nickname` VARCHAR(12) NOT NULL,");
 		result.Append("`title` SMALLINT UNSIGNED NOT NULL,");
 		result.Append("`exts` VARCHAR(1000) NOT NULL,");
-		result.Append("`ip` VARCHAR(15) NOT NULL");
+		result.Append("`ip` VARCHAR(64) NOT NULL");
 		result.Append(");"); // closing
 
 		// DINO HUNTER LEADERBOARD
@@ -66,6 +66,12 @@ internal class DatabaseManager
         result.AppendLine("CREATE TABLE IF NOT EXISTS `ip_bans`");
         result.Append('('); // opening
         result.Append("`ip` VARCHAR(64) NOT NULL,");
+        result.Append("`reason` VARCHAR(255) NOT NULL");
+        result.Append(");"); // closing
+
+        result.AppendLine("CREATE TABLE IF NOT EXISTS `hwid_bans`");
+        result.Append('('); // opening
+        result.Append("`hwid` VARCHAR(100) NOT NULL,");
         result.Append("`reason` VARCHAR(255) NOT NULL");
         result.Append(");"); // closing
 

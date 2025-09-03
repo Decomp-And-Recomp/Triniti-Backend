@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 using System.Text.Json.Nodes;
 using T.Db;
 using T.External;
@@ -10,27 +11,23 @@ namespace T.Controllers;
 [ApiController]
 public class DinoHunterController : ControllerBase
 {
-	const string missingData = "{ \"code\": \"1\" }";
-	const string unableToParseData = "{ \"code\": \"2\" }";
-	const string dataMissesNeededValues = "{ \"code\": \"3\" }";
-	const string userNotFound = "{ \"code\": \"4\" }";
-	const string encryptionError = "{ \"code\": \"5\" }";
-
 	[HttpPost("userHandler.saveUser")]
 	public async Task<IActionResult> SaveUser()
 	{
 		StreamReader reader = new(Request.Body);
 		string data = await reader.ReadToEndAsync();
 
-		if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
+		if (string.IsNullOrEmpty(data)) return BadRequest();
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         var account = DinoHunterAccount.FromJson(data, false);
 
-		await FilterDB.Filter(account);
+		if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
+
+        await FilterDB.Filter(account);
 
 		await DinoHunterDB.SaveUser(account, Utils.GetIp(Request.HttpContext));
 
@@ -43,23 +40,24 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
-		JsonNode? jsonData = JsonNode.Parse(data);
-		if (jsonData == null) return Ok(unableToParseData);
+        JsonNode? jsonData = JsonNode.Parse(data);
+		if (jsonData == null) return BadRequest();
 
-		JsonNode? userid = jsonData["userId"];
-		if (userid == null) return Content(Encrypt(dataMissesNeededValues));
+        JsonNode? userid = jsonData["userId"];
+		if (userid == null) return BadRequest();
+        if (await BanDB.IsHWIDBanned(userid.ToString())) return BadRequest();
 
-		DinoHunterAccount? user = await DinoHunterDB.LoadUser(userid.ToString());
+        DinoHunterAccount? user = await DinoHunterDB.LoadUser(userid.ToString());
 
-		if (user == null) return Content(userNotFound);
+		if (user == null) return BadRequest();
 
-		return Content(Encrypt(user.ToJson(true).ToJsonString()));
+        return Content(Encrypt(user.ToJson(true).ToJsonString()));
 	}
 
 	[HttpPost("userHandler.insertLeaderboard")]
@@ -68,15 +66,16 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         var account = DinoHunterAccount.FromJson(data, true);
+        if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
 
-		await FilterDB.Filter(account);
+        await FilterDB.Filter(account);
 
         await DinoHunterDB.InsertLeaderboard(account);
 
@@ -89,17 +88,18 @@ public class DinoHunterController : ControllerBase
         StreamReader reader = new(Request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(missingData));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         data = XXTEAUtils.Decrypt(data, Config.encryptionKey);
 
-        if (string.IsNullOrEmpty(data)) return Content(Encrypt(encryptionError));
+        if (string.IsNullOrEmpty(data)) return BadRequest();
 
         JsonNode? jsonData = JsonNode.Parse(data);
-        if (jsonData == null) return Content(Encrypt(unableToParseData));
+        if (jsonData == null) return BadRequest();
 
         JsonNode? userId = jsonData["userId"];
-        if (userId == null) return Content(Encrypt(dataMissesNeededValues));
+        if (userId == null) return BadRequest();
+        if (await BanDB.IsHWIDBanned(userId.ToString())) return BadRequest();
 
         JsonObject resultIndex = new()
         {
