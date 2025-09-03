@@ -24,7 +24,7 @@ public class DinoHunterDB
 		cmd.Parameters.AddWithValue("@nickname", account.nickname);
 		cmd.Parameters.AddWithValue("@title", account.title);
 		cmd.Parameters.AddWithValue("@exts", account.exts);
-		cmd.Parameters.AddWithValue("@ip", ip);
+		cmd.Parameters.AddWithValue("@ip", ip ?? "not set");
 
 		var rowsAffected = await cmd.ExecuteNonQueryAsync();
 
