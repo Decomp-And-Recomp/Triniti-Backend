@@ -93,7 +93,11 @@ public class DinoHunterAccount
         }
         catch (Exception ex)
         {
-			Debug.Log(Encoding.UTF8.GetString(Convert.FromBase64String(exts)), ConsoleColor.DarkYellow);
+			string extsConvert = Encoding.UTF8.GetString(Convert.FromBase64String(exts));
+
+            Webhook.Send($"Error reading exts: \n{ex.Message}\n{ex.StackTrace}\n{extsConvert}");
+
+			Debug.Log(extsConvert, ConsoleColor.DarkYellow);
 			Debug.Log(exts, ConsoleColor.DarkRed);
 			Debug.LogException(ex);
         }
@@ -126,7 +130,11 @@ public class DinoHunterAccount
         }
 		catch (Exception ex)
         {
-            Debug.Log(Encoding.UTF8.GetString(Convert.FromBase64String(exts)), ConsoleColor.DarkYellow);
+            string extsConvert = Encoding.UTF8.GetString(Convert.FromBase64String(exts));
+
+            Webhook.Send($"Error reading exts: \n{ex.Message}\n{ex.StackTrace}\n{extsConvert}");
+
+            Debug.Log(extsConvert, ConsoleColor.DarkYellow);
             Debug.Log(exts, ConsoleColor.DarkRed);
             Debug.LogException(ex);
         }

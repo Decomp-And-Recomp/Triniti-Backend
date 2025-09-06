@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
+using T.AntiCheat;
 using T.Db;
 using T.External;
 using T.Objects;
@@ -57,6 +58,8 @@ public class DinoHunterController : ControllerBase
 
         var account = DinoHunterAccount.FromJson(data, true);
         if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
+
+        await DinoHunterAC.ProcessLeaderboard(account);
 
         await FilterDB.Filter(account);
 

@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
+using System.Text;
 
 namespace T;
 
@@ -11,16 +13,16 @@ public static class Program
 
 		Console.CursorVisible = false;
 
-		//_ = Debug.StartFileWriting();
+        //_ = Debug.StartFileWriting();
 
-		Config.Init();
+        Config.Init();
 
         await Db.DatabaseManager.Init();
 
         GetApp(args).Run();
     }
 
-	static WebApplication GetApp(string[] args)
+    static WebApplication GetApp(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
 		builder.WebHost.UseUrls(Config.hostUrl);

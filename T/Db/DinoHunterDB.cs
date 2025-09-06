@@ -122,6 +122,40 @@ public class DinoHunterDB
 		return result;
 	}
 
+	public async static Task<DinoHunterAccount?> GetFromLeaderboard(string? userId)
+    {
+		if (string.IsNullOrWhiteSpace(userId)) return null;
+
+        using var db = await DatabaseManager.GetOpen();
+
+        const string sql = @"
+			SELECT * FROM dh_leaderboard
+			WHERE userid = @userid;";
+
+		using var cmd = new MySqlCommand(sql, db);
+
+        cmd.Parameters.AddWithValue("@userid", userId);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new DinoHunterAccount
+            {
+                userId = reader["userid"].ToString(),
+                nickname = reader["nickname"].ToString(),
+                combatpower = Convert.ToInt32(reader["combatpower"]),
+                exp = Convert.ToInt32(reader["exp"]),
+                hunterLv = Convert.ToInt32(reader["hunterLv"]),
+                crystal = Convert.ToInt32(reader["crystal"]),
+                gold = Convert.ToInt32(reader["gold"]),
+                applause = Convert.ToInt32(reader["applause"])
+            };
+        }
+
+        return null;
+	}
+
 	public async static Task<int> GetPlaceFor(string userId)
 	{
 		using var db = await DatabaseManager.GetOpen();

@@ -23,6 +23,7 @@ public class DebugLogger : ILogger
 		if (exception != null)
 		{
 			Debug.LogException(message, exception);
+			Webhook.Send($"Exception on server:\n");
 			return;
 		}
 
