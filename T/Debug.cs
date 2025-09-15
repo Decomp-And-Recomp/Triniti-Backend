@@ -101,11 +101,14 @@ internal static class Debug
 
     public static void LogInfo(object? msg, ConsoleColor color = ConsoleColor.Cyan) => Log(msg, color);
 
+    // sendWebhook bool is a temp fix btw.
     ///<summary>Logs message and stack trace</summary>
-    public static void LogWarning(object msg)
+    public static void LogWarning(object msg, bool sendWebhook = true)
     {
         Log(msg, ConsoleColor.Yellow);
         LogStack(ConsoleColor.DarkYellow);
+        if (sendWebhook) 
+            _ = Task.Run(() => Webhook.Send($"Warning on server:\nMessage: {msg}"));
     }
 
     ///<summary>Logs message and stack trace</summary>
@@ -120,6 +123,12 @@ internal static class Debug
     {
         Log($"[message]: {ex.Message}", ConsoleColor.Red);
         if (includeStackTrace) Log($"[stack trace]: {ex.StackTrace}", ConsoleColor.Red);
+
+        _ = Task.Run(async () => {
+            await Webhook.Send($"Exception on server:\nMessage: {ex.Message}\n");
+            await Task.Delay(1000);
+            await Webhook.Send($"Stack:\n{ex.StackTrace}");
+        });
     }
 
     ///<summary>Logs message with [message] (from exception) and [stack trace]</summary>
@@ -128,6 +137,13 @@ internal static class Debug
         Log(message, ConsoleColor.Red);
         Log($"[message]: {ex.Message}", ConsoleColor.Red);
         if (includeStackTrace) Log($"[stack trace]: {ex.StackTrace}", ConsoleColor.Red);
+
+        _ = Task.Run(async () => {
+            await Webhook.Send($"Exception on server:\nMessage: {ex.Message}\n");
+            await Webhook.Send($"Exception Message: {ex.Message}\n");
+            await Task.Delay(1000);
+            await Webhook.Send($"Stack:\n{ex.StackTrace}");
+        });
     }
 
     public static void LogStack(ConsoleColor color = ConsoleColor.White)

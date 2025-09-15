@@ -11,6 +11,10 @@ public static class Webhook
 
         try
         {
+            if (message.Length > 2000)
+            {
+                message = message[..1994];
+            }
             using HttpClient client = new();
 
             var payload = new { content = $"```{message}```" };
@@ -21,7 +25,7 @@ public static class Webhook
             HttpResponseMessage response = await client.PostAsync(Config.webhook, content);
 
             if (!response.IsSuccessStatusCode)
-                Debug.LogWarning($"Error {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+                Debug.LogWarning($"Error {response.StatusCode}: {await response.Content.ReadAsStringAsync()}", false);
         }
         catch (Exception e)
         {

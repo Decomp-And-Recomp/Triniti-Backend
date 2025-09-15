@@ -7,78 +7,78 @@ namespace T.Objects;
 
 public class DinoHunterAccount
 {
-	// SV = save request, LB = leaderboard request
+    // SV = save request, LB = leaderboard request
 
-	/// <summary>
-	/// HWID of the person.
-	/// </summary>
-	public string? userId; // SV | LB
-	public string? nickname; // SV | LB
-	public int? title; // SV
+    /// <summary>
+    /// HWID of the person.
+    /// </summary>
+    public string? userId; // SV | LB
+    public string? nickname; // SV | LB
+    public int? title; // SV
 
-	/// <summary>
-	/// Base64 string of a UTF8 encoded XML (yes)
-	/// </summary>
-	public string? exts; // SV
+    /// <summary>
+    /// Base64 string of a UTF8 encoded XML (yes)
+    /// </summary>
+    public string? exts; // SV
 
-	public int? combatpower; // LB
-	public int? exp; // LB
-	public int? hunterLv; // LB
-	public int? crystal; // LB
-	public int? gold; // LB
-	public int? applause; // LB
+    public int? combatpower; // LB
+    public int? exp; // LB
+    public int? hunterLv; // LB
+    public int? crystal; // LB
+    public int? gold; // LB
+    public int? applause; // LB
 
-	public static DinoHunterAccount FromJson(string json, bool leaderboard)
-	{
-		DinoHunterAccount result = new();
+    public static DinoHunterAccount FromJson(string json, bool leaderboard)
+    {
+        DinoHunterAccount result = new();
 
-		JSONNode index = JSON.Parse(json);
+        JSONNode index = JSON.Parse(json);
 
-		result.userId = index["userId"];
-		result.nickname = index["nickName"]; // yes its right, nickName
+        result.userId = index["userId"];
+        result.nickname = index["nickName"]; // yes its right, nickName
 
-		if (string.IsNullOrWhiteSpace(result.userId)) throw new Exception("Cannot process operations with no userId");
-		if (string.IsNullOrWhiteSpace(result.nickname)) result.nickname = "empty";
+        if (string.IsNullOrWhiteSpace(result.userId)) throw new Exception("Cannot process operations with no userId");
+        if (string.IsNullOrWhiteSpace(result.nickname)) result.nickname = "empty";
 
         if (leaderboard)
-		{
-			result.combatpower = index["combatpower"];
-			result.exp = index["exp"];
-			result.hunterLv = index["hunterLv"];
-			result.crystal = index["crystal"];
-			result.gold = index["gold"];
-			result.applause = index["applause"];
+        {
+            result.combatpower = index["combatpower"];
+            result.exp = index["exp"];
+            result.hunterLv = index["hunterLv"];
+            result.crystal = index["crystal"];
+            result.gold = index["gold"];
+            result.applause = index["applause"];
 
-			return result;
-		}
-		
-		result.title = index["title"].AsInt;
-		result.exts = index["exts"];
+            return result;
+        }
+        
+        result.title = index["title"].AsInt;
+        result.exts = index["exts"];
 
-		return result;
-	}
+        return result;
+    }
 
-	public JsonObject ToJson()
-	{
-		JsonObject index = new();
+    public JsonObject ToJson()
+    {
+        JsonObject index = new();
 
-		index["code"] = "0";
+        index["code"] = "0";
 
-		if (userId != null) index["userId"] = userId;
-		if (nickname != null) index["nickName"] = nickname; // yes, nickName
-		if (title != null) index["title"] = title.ToString();
-		if (exts != null) index["exts"] = exts;
+        if (userId != null) index["userId"] = userId;
+        if (nickname != null) index["nickName"] = nickname; // yes, nickName
+        if (title != null) index["title"] = title.ToString();
+        if (exts != null) index["exts"] = exts;
 
-		return index;
-	}
+        return index;
+    }
 
-	public string? GetMottoFromExts()
-	{
-		if (exts == null) return null;
+    public string? GetMottoFromExts()
+    {
+        if (exts == null) return null;
 
         try
         {
-			// substring is a bandaid fix
+            // substring is a bandaid fix
             string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts))[1..];
             XmlDocument doc = new();
             doc.LoadXml(xml);
@@ -93,22 +93,20 @@ public class DinoHunterAccount
         }
         catch (Exception ex)
         {
-			string extsConvert = Encoding.UTF8.GetString(Convert.FromBase64String(exts));
+            string extsConvert = Encoding.UTF8.GetString(Convert.FromBase64String(exts));
 
-            Webhook.Send($"Error reading exts: \n{ex.Message}\n{ex.StackTrace}\n{extsConvert}");
-
-			Debug.Log(extsConvert, ConsoleColor.DarkYellow);
-			Debug.Log(exts, ConsoleColor.DarkRed);
-			Debug.LogException(ex);
+            Debug.Log(extsConvert, ConsoleColor.DarkYellow);
+            Debug.Log(exts, ConsoleColor.DarkRed);
+            Debug.LogException(ex);
         }
 
         return "Internal Error";
     }
 
-	public void SetMottoToExts(string motto)
-	{
-		if (exts == null) return;
-		try
+    public void SetMottoToExts(string motto)
+    {
+        if (exts == null) return;
+        try
         {
             // substring is a bandaid fix
             string xml = Encoding.UTF8.GetString(Convert.FromBase64String(exts)).Substring(1);
@@ -123,16 +121,14 @@ public class DinoHunterAccount
 
             sign.InnerText = motto;
 
-			// exts uploaded by game has the "77u\n (yes its new line)" at begenning? but when adding it manualy causes exception on game?
-			// meh, works fine rn so i wont even bother debugging it.
+            // exts uploaded by game has the "77u\n (yes its new line)" at begenning? but when adding it manualy causes exception on game?
+            // meh, works fine rn so i wont even bother debugging it.
             //exts = "77u/\n" + Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
             exts = Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.OuterXml));
         }
-		catch (Exception ex)
+        catch (Exception ex)
         {
             string extsConvert = Encoding.UTF8.GetString(Convert.FromBase64String(exts));
-
-            Webhook.Send($"Error reading exts: \n{ex.Message}\n{ex.StackTrace}\n{extsConvert}");
 
             Debug.Log(extsConvert, ConsoleColor.DarkYellow);
             Debug.Log(exts, ConsoleColor.DarkRed);

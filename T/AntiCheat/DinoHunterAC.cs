@@ -15,10 +15,9 @@ public static class DinoHunterAC
             bool send = false;
 
             StringBuilder builder = new();
-            builder.AppendLine("[Dino Hunter]");
-            builder.AppendLine("Abnormal activity report");
-            builder.AppendLine($"user id: {account.userId}");
-            builder.AppendLine($"name: {account.nickname}");
+            builder.AppendLine("[Dino Hunter] Activity report");
+            builder.AppendLine($"User ID: {account.userId}");
+            builder.AppendLine($"Name: {account.nickname}");
             builder.AppendLine("===============");
             builder.AppendLine("Detected:");
 
@@ -47,17 +46,18 @@ public static class DinoHunterAC
 
                     if (hunterLvChange > 20) Add($"Hunter Level {oldEntry.hunterLv} > {account.hunterLv}");
                     else if (hunterLvChange < -20) Add($"Hunter Level {oldEntry.hunterLv} > {account.hunterLv}");
+
+                    if (oldEntry.nickname != account.nickname) Add($"Nickname: {oldEntry.nickname} > {account.nickname}");
                 }
-                else Debug.LogWarning("This fucker sent me User ID for the wrong person");
+                else Add($"=====\nThis fucker sent me User ID for the wrong person\nGot: {oldEntry.userId}");
             }
-            else Add("No entry. (New account?)");
+            else Add($"No Entry (new account).");
 
             if (send) await Webhook.Send(builder.ToString());
         }
         catch (Exception e)
         {
             Debug.LogException(e);
-            await Webhook.Send($"Exception on AntiCheat:\nMessage: {e.Message}\nStack: {e.StackTrace}");
         }
     }
 }

@@ -11,26 +11,26 @@ namespace T.Controllers;
 [ApiController]
 public class DinoHunterController : ControllerBase
 {
-	[HttpPost("userHandler.saveUser")]
-	public async Task<IActionResult> SaveUser()
-	{
+    [HttpPost("userHandler.saveUser")]
+    public async Task<IActionResult> SaveUser()
+    {
         string data = await Utils.ReadEncryptedBody(Request);
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
         var account = DinoHunterAccount.FromJson(data, false);
 
-		if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
+        if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
 
         await FilterDB.Filter(account);
 
-		await DinoHunterDB.SaveUser(account, Utils.GetIp(Request.HttpContext));
+        await DinoHunterDB.SaveUser(account, Utils.GetIp(Request.HttpContext));
 
-		return Ok();
-	}
+        return Ok();
+    }
 
-	[HttpPost("userHandler.loadUser")]
-	public async Task<IActionResult> LoadUser()
+    [HttpPost("userHandler.loadUser")]
+    public async Task<IActionResult> LoadUser()
     {
         string data = await Utils.ReadEncryptedBody(Request);
 
@@ -39,18 +39,18 @@ public class DinoHunterController : ControllerBase
         JsonNode? jsonData = JsonNode.Parse(data);
         JsonNode? userid = jsonData?["userId"];
 
-		if (userid == null) return BadRequest();
+        if (userid == null) return BadRequest();
         if (await BanDB.IsHWIDBanned(userid.ToString())) return BadRequest();
 
         DinoHunterAccount? user = await DinoHunterDB.LoadUser(userid.ToString());
 
-		if (user == null) return BadRequest();
+        if (user == null) return BadRequest();
 
         return Content(Utils.Encrypt(user.ToJson().ToJsonString()));
-	}
+    }
 
-	[HttpPost("userHandler.insertLeaderboard")]
-	public async Task<IActionResult> InsertLeaderboard()
+    [HttpPost("userHandler.insertLeaderboard")]
+    public async Task<IActionResult> InsertLeaderboard()
     {
         string data = await Utils.ReadEncryptedBody(Request);
 
@@ -59,17 +59,17 @@ public class DinoHunterController : ControllerBase
         var account = DinoHunterAccount.FromJson(data, true);
         if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
 
-        await DinoHunterAC.ProcessLeaderboard(account);
-
         await FilterDB.Filter(account);
+
+        await DinoHunterAC.ProcessLeaderboard(account);
 
         await DinoHunterDB.InsertLeaderboard(account);
 
-		return Ok();
-	}
+        return Ok();
+    }
 
-	[HttpPost("userHandler.listLeaderboard")]
-	public async Task<IActionResult> ListLeaderboard()
+    [HttpPost("userHandler.listLeaderboard")]
+    public async Task<IActionResult> ListLeaderboard()
     {
         string data = await Utils.ReadEncryptedBody(Request);
 
@@ -90,24 +90,24 @@ public class DinoHunterController : ControllerBase
         };
 
         return Content(Utils.Encrypt(resultIndex.ToString()));
-	}
+    }
 
-	JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
-	{
-		JsonArray result = [];
+    JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
+    {
+        JsonArray result = [];
 
-		foreach (var user in users) 
-		{
-			JsonObject userJson = new()
-			{
-				["userId"] = user.userId,
-				["applause"] = user.applause.ToString(),
-				["rankName"] = $"{user.hunterLv}|{user.combatpower}|{user.nickname}"
-			};
+        foreach (var user in users) 
+        {
+            JsonObject userJson = new()
+            {
+                ["userId"] = user.userId,
+                ["applause"] = user.applause.ToString(),
+                ["rankName"] = $"{user.hunterLv}|{user.combatpower}|{user.nickname}"
+            };
 
-			result.Add(userJson);
-		}
+            result.Add(userJson);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

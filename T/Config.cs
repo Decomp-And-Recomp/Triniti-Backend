@@ -4,7 +4,7 @@ namespace T;
 
 internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
 {
-	static string configPath = "config.json";
+    static string configPath = "config.json";
 
     public static string mySqlConnectionString { get; private set; } = "Server=127.0.0.1;Port=3306;User ID=root;Password=;Database=Triniti;";
 
@@ -17,30 +17,30 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
     public static int dhLeaderboardReturnAmount { get; private set; } = 20;
 
     public static void Init()
-	{
+    {
         configPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!, configPath);
 
         if (!File.Exists(configPath))
-		{
-			Debug.Log("Unable to find config, loading defaults.");
+        {
+            Debug.Log("Unable to find config, loading defaults.");
 
             Save();
             return;
-		}
+        }
 
         string configFile = File.ReadAllText(configPath);
 
-		JSONNode index = JSON.Parse(configFile);
+        JSONNode index = JSON.Parse(configFile);
 
-		mySqlConnectionString = index["mySqlConnectionString"];
+        mySqlConnectionString = index["mySqlConnectionString"];
         webhook = index["webhook"];
-		hostUrl = index["hostUrl"];
+        hostUrl = index["hostUrl"];
         enableAntiCheat = index["enableAntiCheat"];
 
         JSONObject defaultEncryptionkey = new();
-		defaultEncryptionkey.Value = "ExampleKey";
+        defaultEncryptionkey.Value = "ExampleKey";
 
-		encryptionKey = index.GetValueOrDefault("encryptionKey", defaultEncryptionkey);
+        encryptionKey = index.GetValueOrDefault("encryptionKey", defaultEncryptionkey);
 
         // DH
         dhLeaderboardReturnAmount = index["dhl"];
@@ -48,8 +48,8 @@ internal static class Config // THIS IS TEMP IM GONNA REWRITE IT
         Save();
     }
 
-	static void Save()
-	{
+    static void Save()
+    {
         JSONObject index = new();
 
         index["mySqlConnectionString"] = mySqlConnectionString;
