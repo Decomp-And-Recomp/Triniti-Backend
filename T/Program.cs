@@ -14,6 +14,8 @@ public static class Program
         Console.WriteLine($"Written by overmet15.");
         Console.ForegroundColor = ConsoleColor.White;
 
+        Console.WriteLine();
+
         Console.InputEncoding = System.Text.Encoding.UTF8;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
