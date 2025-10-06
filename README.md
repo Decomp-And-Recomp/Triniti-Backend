@@ -13,21 +13,40 @@ Its mainly for Call of Mini games, if you want to host the multiplayer servers, 
 In order to run the servers, you currently need MySQL database installed. However, SQLite support is planned.
 
 ### General
-* `hostUrl`: A url used to host the app on.
-  * Default: `"http://127.0.0.1:7125"`
-* `encryptionKey`: A encryption key used to do the requests. If you want to disable the encryption altogether, make it empty.
-  * Default: `"ExampleKey"`
-* `enableAntiCheat`: Toggle the Anti Cheat.
-  * Default: `false`
+|name|description|default|acceptable values|
+|----|-----------|-------|-----------------|
+|`hostUrl`|A url used to host the app on.|`"http://127.0.0.1:7125"`|url+port (string)|
+|`encryptionKey`|A encryption key used to do the requests. If you want to disable the encryption altogether, make it empty.|`"ExampleKey"`|string|
+|`enableAntiCheat`|A encryption key used to do the requests. If you want to disable the encryption altogether, make it empty.|`"false"`|true/false|
 
 ### Database
-ToDo
+|name|description|default|acceptable values|
+|----|-----------|-------|-----------------|
+|`type`|A database used.|`"MySQL"`|`"MySQL"`, `"SQLite"`|
+|`server`|A server where the database is hosted on.|`"127.0.0.1"`|ip (string)|
+|`port`|A port where the database is hosted on.|`3306`|integer|
+|`userId`|A user id to access the database.|`"root"`|string|
+|`password`|A password to access the database.|`""`|string|
+|`databaseName`|A database name to use.|`"Triniti"`|string|
 
 ### Discord
 Discord configuration allows you to use your Discord bot to control the servers.
-ToDo
+|name|description|default|acceptable values|
+|----|-----------|-------|-----------------|
+|`token`|A token of the discord bot.|`""`|string|
+|`serverId`|A id of a server where bot will function.|`0`|ulong (long positive number)|
+|`loggingChannelId`|A id of a channel where bot will send its logs.|`0`|ulong (long positive number)|
+|`allowedRoles`|A list of role ids, that provide access to the bot.|`0`|list of ulong (long positive number)|
 
 ### Dino Hunter
-Call of Mini Dino Hunter configuration.
-* `maxLeaderboardReturnAmount`: Allows you to set the amount of leaderboard entries the server sends to the client when requested.
-  * Default: `200`
+|name|description|default|acceptable values|
+|----|-----------|-------|-----------------|
+|`maxLeaderboardReturnAmount`|Allows you to set the amount of leaderboard entries the server sends to the client when requested.|`200`|integer|
+
+## Branches
+This repository has 2 branches, `main` and `dev`.  
+`main` branch is a stable branch that was tested and used.  
+`dev` branch is for newest features and fixes, but it was not tested, meaning it may crash or simply break, and shouldnt be used on production.
+
+## Credits
+[overmet15](https://github.com/overmet15) - Lead Developer.
