@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using T.AntiCheat;
-using T.Db;
-using T.External;
-using T.Objects;
+using T.Helpers;
+using T.Extensions;
+using T.Database.Objects.DinoHunter;
 
 namespace T.Controllers;
 
@@ -16,15 +16,14 @@ public class DinoHunterController : ControllerBase
     {
         string data = await Utils.ReadEncryptedBody(Request);
 
-        if (string.IsNullOrEmpty(data)) return BadRequest();
+        var entry = DinoHunterHelper.AccountEntryFromJson(data, Utils.GetIp(Request.HttpContext));
+        if (entry == null) return BadRequest("Unable to parse the request data.");
 
-        var account = DinoHunterAccount.FromJson(data, false);
+        if (await DB.banDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
 
-        if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
+        await DinoHunterHelper.Filter(entry);
 
-        await FilterDB.Filter(account);
-
-        await DinoHunterDB.SaveUser(account, Utils.GetIp(Request.HttpContext));
+        await DB.dinoHunterDatabase.SaveUser(entry);
 
         return Ok();
     }
@@ -33,37 +32,36 @@ public class DinoHunterController : ControllerBase
     public async Task<IActionResult> LoadUser()
     {
         string data = await Utils.ReadEncryptedBody(Request);
-
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
-        JsonNode? jsonData = JsonNode.Parse(data);
-        JsonNode? userid = jsonData?["userId"];
+        string? userid = JsonNode.Parse(data)?["userId"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(userid)) return BadRequest();
 
-        if (userid == null) return BadRequest();
-        if (await BanDB.IsHWIDBanned(userid.ToString())) return BadRequest();
+        if (await DB.banDatabase.IsHWIDBanned(userid)) return Forbid("The user is banned.");
 
-        DinoHunterAccount? user = await DinoHunterDB.LoadUser(userid.ToString());
+        var entry = await DB.dinoHunterDatabase.LoadUser(userid);
 
-        if (user == null) return BadRequest();
+        if (entry == null) return BadRequest();
 
-        return Content(Utils.Encrypt(user.ToJson().ToJsonString()));
+        return Content(Utils.Encrypt(entry.ToJson().ToJsonString()));
     }
 
     [HttpPost("userHandler.insertLeaderboard")]
     public async Task<IActionResult> InsertLeaderboard()
     {
         string data = await Utils.ReadEncryptedBody(Request);
-
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
-        var account = DinoHunterAccount.FromJson(data, true);
-        if (await BanDB.IsHWIDBanned(account.userId)) return BadRequest();
+        var entry = DinoHunterHelper.LeaderboardEntryFromJson(data);
+        if (entry == null) return BadRequest();
 
-        await FilterDB.Filter(account);
+        if (await DB.banDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
 
-        await DinoHunterAC.ProcessLeaderboard(account);
+        await DinoHunterHelper.Filter(entry);
 
-        await DinoHunterDB.InsertLeaderboard(account);
+        await DinoHunterAC.ProcessLeaderboard(entry);
+
+        await DB.dinoHunterDatabase.InsertLeaderboard(entry);
 
         return Ok();
     }
@@ -75,24 +73,22 @@ public class DinoHunterController : ControllerBase
 
         if (string.IsNullOrEmpty(data)) return BadRequest();
 
-        JsonNode? jsonData = JsonNode.Parse(data);
-        if (jsonData == null) return BadRequest();
-
-        JsonNode? userId = jsonData["userId"];
-        if (userId == null) return BadRequest();
-        if (await BanDB.IsHWIDBanned(userId.ToString())) return BadRequest();
+        string? userId = JsonNode.Parse(data)?["userId"]?.GetValue<string>();
+        
+        if (await DB.banDatabase.IsHWIDBanned(userId)) return Forbid("The user is banned.");
 
         JsonObject resultIndex = new()
         {
             ["code"] = "0",
-            ["leaderboards"] = UserListToLeaderboard(await DinoHunterDB.ListLeaderboard()),
-            ["myrank"] = await DinoHunterDB.GetPlaceFor(userId.ToString())
+            ["leaderboards"] = EntryListToLeadeboard(
+                await DB.dinoHunterDatabase.ListLeaderboard(Config.DinoHunter.maxLeaderboardReturnAmount)),
+            ["myrank"] = await DB.dinoHunterDatabase.GetPlaceFor(userId)
         };
 
-        return Content(Utils.Encrypt(resultIndex.ToString()));
+        return Content(Utils.Encrypt(resultIndex.ToJsonString()));
     }
 
-    JsonArray UserListToLeaderboard(List<DinoHunterAccount> users)
+    static JsonArray EntryListToLeadeboard(List<LeaderboardEntry> users)
     {
         JsonArray result = [];
 

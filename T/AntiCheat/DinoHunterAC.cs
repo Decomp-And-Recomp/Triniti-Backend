@@ -1,14 +1,14 @@
 ﻿using System.Text;
-using T.Db;
-using T.Objects;
+using T.Database.Objects.DinoHunter;
+using T.Logging;
 
 namespace T.AntiCheat;
 
 public static class DinoHunterAC
 {
-    public static async Task ProcessLeaderboard(DinoHunterAccount account)
+    public static async Task ProcessLeaderboard(LeaderboardEntry account)
     {
-        if (!Config.enableAntiCheat) return;
+        if (!Config.General.enableAntiCheat) return;
 
         try
         {
@@ -31,7 +31,7 @@ public static class DinoHunterAC
             if (account.crystal > 1250) Add($"Crystal Amount: {account.crystal}");
             if (account.hunterLv > 250) Add($"Hunter Level: {account.hunterLv}");
 
-            var oldEntry = await DinoHunterDB.GetFromLeaderboard(account.userId!);
+            var oldEntry = await DB.dinoHunterDatabase.FromLeaderboard(account.userId);
 
             if (oldEntry != null)
             {
@@ -53,11 +53,11 @@ public static class DinoHunterAC
             }
             else Add($"No Entry (new account).");
 
-            if (send) await Webhook.Send(builder.ToString());
+            if (send) External.Discord.Log(builder.ToString());
         }
         catch (Exception e)
         {
-            Debug.LogException(e);
+            Logger.LogException(e);
         }
     }
 }

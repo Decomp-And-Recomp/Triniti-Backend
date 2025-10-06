@@ -1,27 +1,36 @@
 ﻿using MySqlConnector;
+using T.Database;
 
-namespace T.Db;
+namespace T.MySql;
 
-internal class DatabaseManager
+public class MySqlDatabase : DatabaseController
 {
-    public static async Task Init()
+    string connectionString = string.Empty;
+
+    public MySqlDatabase()
     {
+        banDatabase = new MySqlBanDatabase(this);
+        filterDatabase = new MySqlFilterDatabase(this);
+        dinoHunterDatabase = new MySqlDinoHunterDatabase(this);
+    }
+
+    public override async Task Initialize(string server, int port, string database, string user, string password)
+    {
+        connectionString = $"Server={server};Port={port};User ID={user};Password={password};Database={database}";
+
         using var conn = await GetOpen();
 
         using MySqlCommand command = new(GetInitCommands(), conn);
         await command.ExecuteNonQueryAsync();
     }
 
-    /// <summary>Get raw, not open connection with <see cref="Settings.mySqlConnectionString"/>, USE `using` TO DISPOSE AFTER USING!</summary>
-    public static MySqlConnection Get()
+    MySqlConnection Get()
     {
-        //ToDo: make it use Config.mySqlConnectionString without specifying it every time i start connection?
-        // (Set it as default in db settings on server start?)
-        return new MySqlConnection(Config.mySqlConnectionString);
+        return new MySqlConnection(connectionString);
     }
 
-    /// <summary>Get open connection with <see cref="Config.mySqlConnectionString"/>, USE `using` TO DISPOSE AFTER USING!</summary>
-    public static async Task<MySqlConnection> GetOpen()
+    /// <summary>Get new open connection, USE `using` TO DISPOSE AFTER!</summary>
+    internal async Task<MySqlConnection> GetOpen()
     {
         MySqlConnection conn = Get();
 
@@ -30,7 +39,6 @@ internal class DatabaseManager
         return conn;
     }
 
-    // yes ill do it later
     static string GetInitCommands()
     {
         var result = new System.Text.StringBuilder();
@@ -40,7 +48,7 @@ internal class DatabaseManager
         result.Append('('); // opening
         result.Append("`userid` VARCHAR(100) UNIQUE NOT NULL,");
         result.Append("`nickname` VARCHAR(12) NOT NULL,");
-        result.Append("`title` SMALLINT UNSIGNED NOT NULL,");
+        result.Append("`title` INT NOT NULL,");
         result.Append("`exts` VARCHAR(1000) NOT NULL,");
         result.Append("`ip` VARCHAR(64) NOT NULL");
         result.Append(");"); // closing

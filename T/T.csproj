@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+    <PackageReference Include="Discord.Net" Version="3.18.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\T.Database\T.Database.csproj" />
+    <ProjectReference Include="..\T.MySql\T.MySql.csproj" />
   </ItemGroup>
 
 </Project>

@@ -31,11 +31,15 @@ public static class Utils
         StreamReader reader = new(request.Body);
         string data = await reader.ReadToEndAsync();
 
-        return XXTEAUtils.Decrypt(data, Config.encryptionKey);
+        if (string.IsNullOrWhiteSpace(Config.General.encryptionKey)) return data;
+
+        return XXTEAUtils.Decrypt(data, Config.General.encryptionKey);
     }
 
     public static string Encrypt(string str)
     {
-        return XXTEAUtils.Encrypt(str, Config.encryptionKey);
+        if (string.IsNullOrWhiteSpace(Config.General.encryptionKey)) return str;
+
+        return XXTEAUtils.Encrypt(str, Config.General.encryptionKey);
     }
 }

@@ -1,13 +1,14 @@
 ﻿namespace T.Logging;
 
-public class DebugLoggerProvider : ILoggerProvider
+public class MyLoggerProvider : ILoggerProvider
 {
     public ILogger CreateLogger(string categoryName)
     {
-        return new DebugLogger();
+        return new MyLogger();
     }
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
     }
 }

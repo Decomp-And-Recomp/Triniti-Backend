@@ -1,13 +1,21 @@
 ﻿using MySqlConnector;
-using T.Objects;
+using T.Database;
+using T.Database.Objects.DinoHunter;
 
-namespace T.Db;
+namespace T.MySql;
 
-public class DinoHunterDB
+public class MySqlDinoHunterDatabase : DinoHunterDatabase
 {
-    public static async Task SaveUser(DinoHunterAccount account, string? ip)
+    protected readonly MySqlDatabase controller;
+
+    public MySqlDinoHunterDatabase(MySqlDatabase controller)
     {
-        using var db = await DatabaseManager.GetOpen();
+        this.controller = controller;
+    }
+
+    public override async Task SaveUser(AccountEntry entry)
+    {
+        using var db = await controller.GetOpen();
 
         const string sql = @"
         INSERT INTO `dh_accounts` (userid, nickname, title, exts, ip)
@@ -20,20 +28,18 @@ public class DinoHunterDB
 
         using var cmd = new MySqlCommand(sql, db);
 
-        cmd.Parameters.AddWithValue("@userid", account.userId);
-        cmd.Parameters.AddWithValue("@nickname", account.nickname);
-        cmd.Parameters.AddWithValue("@title", account.title);
-        cmd.Parameters.AddWithValue("@exts", account.exts);
-        cmd.Parameters.AddWithValue("@ip", ip ?? "not set");
+        cmd.Parameters.AddWithValue("@userid", entry.userId);
+        cmd.Parameters.AddWithValue("@nickname", entry.nickname);
+        cmd.Parameters.AddWithValue("@title", entry.title);
+        cmd.Parameters.AddWithValue("@exts", entry.exts);
+        cmd.Parameters.AddWithValue("@ip", entry.ip);
 
         var rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-        Debug.Log($"Updated info for user: {account.userId}. Rows Affected: {rowsAffected}.");
     }
 
-    public static async Task<DinoHunterAccount?> LoadUser(string userId)
+    public override async Task<AccountEntry?> LoadUser(string? userId)
     {
-        using var db = await DatabaseManager.GetOpen();
+        using var db = await controller.GetOpen();
 
         const string sql = @"
             SELECT userid, nickname, title, exts
@@ -45,23 +51,19 @@ public class DinoHunterDB
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        if (await reader.ReadAsync())
+        if (!await reader.ReadAsync()) return null;
+
+        return new AccountEntry
         {
-            return new DinoHunterAccount
-            {
-                userId = reader["userid"].ToString(),
-                nickname = reader["nickname"].ToString(),
-                title = Convert.ToInt32(reader["title"]),
-                exts = reader["exts"].ToString()
-            };
-        }
-
-        return null;
+            userId = reader["userid"].ToString(),
+            nickname = reader["nickname"].ToString(),
+            title = Convert.ToInt32(reader["title"]),
+            exts = reader["exts"].ToString()
+        };
     }
-
-    public static async Task InsertLeaderboard(DinoHunterAccount account)
+    public override async Task InsertLeaderboard(LeaderboardEntry entry)
     {
-        using var db = await DatabaseManager.GetOpen();
+        using var db = await controller.GetOpen();
 
         const string sql = @"
         INSERT INTO `dh_leaderboard` (userid, nickname, combatpower, exp, hunterLv, crystal, gold, applause)
@@ -77,36 +79,34 @@ public class DinoHunterDB
 
         using var cmd = new MySqlCommand(sql, db);
 
-        cmd.Parameters.AddWithValue("@userid", account.userId);
-        cmd.Parameters.AddWithValue("@nickname", account.nickname);
-        cmd.Parameters.AddWithValue("@combatpower", account.combatpower);
-        cmd.Parameters.AddWithValue("@exp", account.exp);
-        cmd.Parameters.AddWithValue("@hunterLv", account.hunterLv);
-        cmd.Parameters.AddWithValue("@crystal", account.crystal);
-        cmd.Parameters.AddWithValue("@gold", account.gold);
-        cmd.Parameters.AddWithValue("@applause", account.applause);
+        cmd.Parameters.AddWithValue("@userid", entry.userId);
+        cmd.Parameters.AddWithValue("@nickname", entry.nickname);
+        cmd.Parameters.AddWithValue("@combatpower", entry.combatpower);
+        cmd.Parameters.AddWithValue("@exp", entry.exp);
+        cmd.Parameters.AddWithValue("@hunterLv", entry.hunterLv);
+        cmd.Parameters.AddWithValue("@crystal", entry.crystal);
+        cmd.Parameters.AddWithValue("@gold", entry.gold);
+        cmd.Parameters.AddWithValue("@applause", entry.applause);
 
         var rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-        //Debug.Log($"Updated leaderboard for user: {account.userId}. Rows Affected: {rowsAffected}.");
     }
 
-    public async static Task<List<DinoHunterAccount>> ListLeaderboard()
+    public override async Task<List<LeaderboardEntry>> ListLeaderboard(int amount)
     {
-        using var db = await DatabaseManager.GetOpen();
+        using var db = await controller.GetOpen();
 
         using var cmd = new MySqlCommand($@"
             SELECT * FROM `dh_leaderboard` 
             ORDER BY hunterLv DESC, exp DESC, combatpower DESC 
-            LIMIT {Config.dhLeaderboardReturnAmount};", db);
+            LIMIT {amount};", db);
 
         using var reader = await cmd.ExecuteReaderAsync();
 
-        var result = new List<DinoHunterAccount>();
+        var result = new List<LeaderboardEntry>();
 
         while (await reader.ReadAsync())
         {
-            result.Add(new DinoHunterAccount()
+            result.Add(new LeaderboardEntry()
             {
                 userId = reader["userid"].ToString(),
                 nickname = reader["nickname"].ToString(),
@@ -122,11 +122,11 @@ public class DinoHunterDB
         return result;
     }
 
-    public async static Task<DinoHunterAccount?> GetFromLeaderboard(string? userId)
+    public override async Task<LeaderboardEntry?> FromLeaderboard(string? userId)
     {
         if (string.IsNullOrWhiteSpace(userId)) return null;
 
-        using var db = await DatabaseManager.GetOpen();
+        using var db = await controller.GetOpen();
 
         const string sql = @"
             SELECT * FROM dh_leaderboard
@@ -140,7 +140,7 @@ public class DinoHunterDB
 
         if (await reader.ReadAsync())
         {
-            return new DinoHunterAccount
+            return new LeaderboardEntry
             {
                 userId = reader["userid"].ToString(),
                 nickname = reader["nickname"].ToString(),
@@ -156,9 +156,11 @@ public class DinoHunterDB
         return null;
     }
 
-    public async static Task<int> GetPlaceFor(string userId)
+    public override async Task<int> GetPlaceFor(string? userId)
     {
-        using var db = await DatabaseManager.GetOpen();
+        if (userId == null) return -1;
+
+        using var db = await controller.GetOpen();
 
         const string sql = @"
         SELECT COUNT(*) + 1 AS place

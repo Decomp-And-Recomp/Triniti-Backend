@@ -4,20 +4,28 @@ namespace T;
 
 public static class Program
 {
+    const string release = "1.0.0-stable";
+
     public static async Task Main(string[] args)
     {
+        Console.WriteLine($"Triniti Backend. Release: {release}");
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"Written by overmet15.");
+        Console.ForegroundColor = ConsoleColor.White;
+
         Console.InputEncoding = System.Text.Encoding.UTF8;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         Console.CursorVisible = false;
 
-        //_ = Debug.StartFileWriting();
-
         SetupCrashCatch();
 
-        Config.Init();
+        await Config.Initialize();
 
-        await Db.DatabaseManager.Init();
+        await DB.Init();
+
+        await External.Discord.Run();
 
         GetApp(args).Run();
     }
@@ -30,7 +38,7 @@ public static class Program
             {
                 var ex = e.ExceptionObject as Exception;
 
-                File.AppendAllText("fatal.txt", $"[{DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss")}]: {ex}{Environment.NewLine}");
+                File.AppendAllText("fatal.txt", $"[{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}]: {ex}\n\n");
             }
             catch
             {
@@ -42,13 +50,12 @@ public static class Program
     static WebApplication GetApp(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.UseUrls(Config.hostUrl);
-        //builder.WebHost.UseUrls("http://127.0.0.4:85/");
+        builder.WebHost.UseUrls(Config.General.hostUrl);
 
         builder.Services.AddControllers();
 
         builder.Logging.ClearProviders();
-        builder.Logging.AddProvider(new Logging.DebugLoggerProvider());
+        builder.Logging.AddProvider(new Logging.MyLoggerProvider());
 
         var app = builder.Build();
 
