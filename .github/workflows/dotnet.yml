@@ -12,6 +12,20 @@ on:
 jobs:
 
   build:
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: Triniti
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          
     runs-on: ubuntu-latest
 
     steps:
@@ -26,3 +40,11 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Run
+      run: |
+        dotnet run --project YourApp.csproj &
+        APP_PID=$!
+        echo "App started with PID $APP_PID"
+    - name: Wait
+      run: sleep 10
+
