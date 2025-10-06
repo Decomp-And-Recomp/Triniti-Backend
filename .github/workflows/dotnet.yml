@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore T/T.csproj
+      run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore T/T.csproj
+      run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
