@@ -42,15 +42,15 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Run
       run: |
-          dotnet run --project T/T.csproj &
-          APP_PID=$!
-          echo "App started with PID $APP_PID"
-          sleep 10
-          if ps -p $APP_PID > /dev/null; then
-            echo "App is running!"
-          else
-            echo "App crashed!"
-            exit 1
-          fi
-          kill $APP_PID
+        dotnet T/BuildOutput/T.dll &
+        APP_PID=$!
+        echo "App started with PID $APP_PID"
+        sleep 10
+        if ps -p $APP_PID > /dev/null; then
+          echo "App is running!"
+        else
+          echo "App crashed!"
+          exit 1
+        fi
+        kill $APP_PID
 
