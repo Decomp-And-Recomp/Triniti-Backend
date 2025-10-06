@@ -66,7 +66,7 @@ public static class Config
     public static void SetDefaults()
     {
         General.hostUrl = "http://127.0.0.1:7125";
-        General.encryptionKey = "";
+        General.encryptionKey = "ExampleKey";
         General.enableAntiCheat = false;
 
         Database.type = Database.Type.MySQL;
