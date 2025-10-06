@@ -4,7 +4,7 @@ namespace T;
 
 public static class Program
 {
-    const string release = "1.0.0-stable";
+    const string release = "1.0.1-dev";
 
     public static async Task Main(string[] args)
     {

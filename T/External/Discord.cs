@@ -13,8 +13,8 @@ public class Discord
         GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
     });
 
-    static readonly ConcurrentQueue<string> logQueue = new();
-    static readonly System.Timers.Timer logTimer = new(800);
+    static ConcurrentQueue<string>? logQueue;
+    static System.Timers.Timer? logTimer;
 
     public static async Task Run()
     {
@@ -33,6 +33,11 @@ public class Discord
         if (Config.Discord.loggingChannelId == 0)
         {
             Logger.Warning("Discord logging disabled: loggingChannelId cannot be 0");
+        }
+        else
+        {
+            logTimer = new(800);
+            logQueue = new();
         }
 
         if (Config.Discord.allowedRoles.Count == 0)
@@ -53,9 +58,12 @@ public class Discord
     {
         try
         {
-            logTimer.Elapsed += async (_, _) => await FlushLogQueue();
-            logTimer.AutoReset = true;
-            logTimer.Start();
+            if (logTimer != null)
+            {
+                logTimer.Elapsed += async (_, _) => await FlushLogQueue();
+                logTimer.AutoReset = true;
+                logTimer.Start();
+            }
 
             var guild = client.GetGuild(Config.Discord.serverId);
 
@@ -176,13 +184,14 @@ public class Discord
 
     public static void Log(string? message)
     {
+        if (logQueue == null) return;
         if (string.IsNullOrWhiteSpace(message)) return;
         logQueue.Enqueue(message);
     }
 
     static async Task FlushLogQueue()
     {
-        if (logQueue.IsEmpty) return;
+        if (logQueue!.IsEmpty) return;
 
         try
         {
