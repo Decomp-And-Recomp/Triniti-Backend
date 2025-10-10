@@ -12,6 +12,7 @@ public class MySqlDatabase : DatabaseController
         banDatabase = new MySqlBanDatabase(this);
         filterDatabase = new MySqlFilterDatabase(this);
         dinoHunterDatabase = new MySqlDinoHunterDatabase(this);
+        gameConfigDatabase = new MySqlGameConfigDatabase(this);
     }
 
     public override async Task Initialize(string server, int port, string database, string user, string password)
