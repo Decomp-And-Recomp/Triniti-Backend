@@ -4,17 +4,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputPath>..\_Output\Others\MySql\$(Configuration)\</OutputPath>
+    <OutputPath>..\_Output\Others\SQLite\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Platforms>x64;x86</Platforms>
   </PropertyGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\T.Database\T.Database.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\T.Database\T.Database.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MySqlConnector" Version="2.4.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+    </ItemGroup>
 
 </Project>

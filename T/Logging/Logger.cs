@@ -101,5 +101,5 @@ public static class Logger
         => Log(LogLevel.Error, message);
 
     public static void LogException(Exception exception)
-        => Log(LogLevel.Exception, $"Message: {exception.Message}\nStack Trace: {exception.InnerException}");
+        => Log(LogLevel.Exception, $"Message: {exception.Message}\nStack Trace: {exception.StackTrace}");
 }

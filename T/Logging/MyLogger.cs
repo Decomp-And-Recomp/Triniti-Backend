@@ -13,6 +13,8 @@ public class MyLogger : ILogger
 
     public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
     {
+        if (logLevel == Microsoft.Extensions.Logging.LogLevel.Information) return false;
+
         return true;
     }
 
