@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
+using T.External;
+using T.Logging;
 
 namespace T.Controllers;
 
@@ -29,5 +31,17 @@ public class MiscController : ControllerBase
     public IActionResult GetTimeMs()
     {
         return Content(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
+    }
+
+    [HttpPost("getGameConfig")]
+    public async Task<IActionResult> GetGame()
+    {
+        string body = await Utils.ReadEncryptedBody(Request);
+
+        var config = await DB.gameConfigDatabase.GetGameConfig(body);
+
+        if (config == null) return BadRequest();
+
+        return Ok(XXTEAUtils.Encrypt($"{config.ip}|{config.port}|{config.version}", Config.General.encryptionKey));
     }
 }

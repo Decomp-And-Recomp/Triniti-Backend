@@ -1,5 +1,6 @@
 ﻿using MySqlConnector;
 using T.Database;
+using T.Database.Objects;
 
 namespace T.MySql;
 
@@ -12,8 +13,27 @@ public class MySqlGameConfigDatabase : GameConfigDatabase
         this.controller = controller;
     }
 
-    public override KeyValuePair<string, int>? GetGameConfig(string? game)
+    public override async Task<GameConfig?> GetGameConfig(string? game)
     {
-        throw new NotImplementedException();
+        if (game == null) return null;
+
+        using var db = await controller.GetOpen();
+
+        using var cmd = new MySqlCommand("SELECT * FROM `game_config` WHERE `game` = @game", db);
+        cmd.Parameters.AddWithValue("@game", game);
+
+        var reader = await cmd.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            GameConfig result = new();
+            result.ip = reader["ip"].ToString()!;
+            result.port = Convert.ToInt32(reader["port"]);
+            result.version = reader["version"].ToString()!;
+
+            return result;
+        }
+
+        return null;
     }
 }

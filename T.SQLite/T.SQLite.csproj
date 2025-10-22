@@ -4,14 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
-
+    
     <ItemGroup>
         <ProjectReference Include="..\T.Database\T.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Data.SQLite" Version="2.0.2" PrivateAssets="all" />
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     </ItemGroup>
 
 </Project>

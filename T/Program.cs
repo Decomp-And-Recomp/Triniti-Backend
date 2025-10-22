@@ -4,15 +4,11 @@ namespace T;
 
 public static class Program
 {
-    const string release = "1.0.1-dev";
+    const string release = "1.1.0";
 
     public static async Task Main(string[] args)
     {
         Console.WriteLine($"Triniti Backend. Release: {release}");
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"Written by overmet15.");
-        Console.ForegroundColor = ConsoleColor.White;
 
         Console.WriteLine();
 

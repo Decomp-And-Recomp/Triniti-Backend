@@ -84,6 +84,14 @@ public class MySqlDatabase : DatabaseController
         result.Append("`reason` VARCHAR(255) NOT NULL");
         result.Append(");"); // closing
 
+        result.AppendLine("CREATE TABLE IF NOT EXISTS `game_config`");
+        result.Append('('); // opening
+        result.Append("`game` VARCHAR(24) UNIQUE NOT NULL,");
+        result.Append("`ip` VARCHAR(255) NOT NULL,");
+        result.Append("`port` INT NOT NULL,");
+        result.Append("`version` VARCHAR(255) NOT NULL");
+        result.Append(");"); // closing
+
         return result.ToString();
     }
 }
