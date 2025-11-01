@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputPath>..\_Output\Others\MySql\$(Platform)\$(Configuration)\</OutputPath>
+    <OutputPath>..\_Output\Others\MySql\$(Configuration)\$(Platform)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Platforms>x64;x86</Platforms>
   </PropertyGroup>
