@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.Database", "T.Database\T.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.MySql", "T.MySql\T.MySql.csproj", "{A44BF6F9-3E6A-4A1F-89FD-941D1C0C0C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "T.SQLite", "T.SQLite\T.SQLite.csproj", "{6A7F0BCF-34E0-4720-A8F6-C5B05059ED71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.SQLite", "T.SQLite\T.SQLite.csproj", "{6A7F0BCF-34E0-4720-A8F6-C5B05059ED71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.Integration", "T.Integration\T.Integration.csproj", "{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,18 @@ Global
 		{6A7F0BCF-34E0-4720-A8F6-C5B05059ED71}.Release|x64.Build.0 = Release|x64
 		{6A7F0BCF-34E0-4720-A8F6-C5B05059ED71}.Release|x86.ActiveCfg = Release|x86
 		{6A7F0BCF-34E0-4720-A8F6-C5B05059ED71}.Release|x86.Build.0 = Release|x86
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|x64.Build.0 = Release|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
