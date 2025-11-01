@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>x64;x86</Platforms>
-    <OutputPath>..\_Output\$(Configuration)\</OutputPath>
+    <OutputPath>..\_Output\$(Platform)\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
