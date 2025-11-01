@@ -22,7 +22,7 @@ public class MyLogger : ILogger
     {
         if (exception != null)
         {
-            Logger.LogException(exception);
+            Logger.Exception(exception);
             return;
         }
 

@@ -62,29 +62,8 @@ public static class Logger
             if (Config.Discord.loggingChannelId == 0) return;
 
             string discordMessage = message!.ToString() ?? "null";
-            if (discordMessage.Length > 1925) discordMessage = discordMessage[..1925];
 
-            switch (level)
-            {
-                case LogLevel.Info:
-                    External.Discord.Log($"ansi\n\u001b[2;32m\u001b[2;37m\u001b[2;34m{level}\u001b[0m\u001b[2;37m\u001b[0m\u001b[2;32m\u001b[0m: {message}");
-                    break;
-                case LogLevel.Log:
-                    External.Discord.Log($"ansi\n\u001b[2;32m\u001b[2;37m{level}\u001b[0m\u001b[2;32m\u001b[0m: {message}");
-                    break;
-                case LogLevel.Warning:
-                    External.Discord.Log($"ansi\n\u001b[2;31m\u001b[2;33m{level}\u001b[0m\u001b[2;31m\u001b[0m: {message}");
-                    break;
-                case LogLevel.Error:
-                    External.Discord.Log($"ansi\n\u001b[2;31m\u001b[2;33m\u001b[2;31m{level}\u001b[0m\u001b[2;33m\u001b[0m\u001b[2;31m\u001b[0m: {message}");
-                    break;
-                case LogLevel.Exception:
-                    External.Discord.Log($"ansi\n\u001b[2;31m\u001b[2;33m\u001b[2;31m{level}\u001b[0m\u001b[2;33m\u001b[0m\u001b[2;31m\u001b[0m: {message}");
-                    break;
-                case LogLevel.Critical:
-                    External.Discord.Log($"ansi\n\u001b[2;31m\u001b[2;33m\u001b[2;31m{level}\u001b[0m\u001b[2;33m\u001b[0m\u001b[2;31m\u001b[0m: {message}");
-                    break;
-            }
+            External.Discord.Log($"{level}:\n{message}");
         }
     }
 
@@ -100,6 +79,9 @@ public static class Logger
     public static void Error(string message)
         => Log(LogLevel.Error, message);
 
-    public static void LogException(Exception exception)
+    public static void Exception(Exception exception)
         => Log(LogLevel.Exception, $"Message: {exception.Message}\nStack Trace: {exception.StackTrace}");
+
+    public static void Exception(Exception exception, string additional)
+        => Log(LogLevel.Exception, $"Message: {exception.Message}\nStack Trace: {exception.StackTrace}\nAdditional: {additional}");
 }
