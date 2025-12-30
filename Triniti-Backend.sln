@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.Database", "T.Database\T.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.MySql", "T.MySql\T.MySql.csproj", "{A44BF6F9-3E6A-4A1F-89FD-941D1C0C0C9D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "T.Integration", "T.Integration\T.Integration.csproj", "{09C0554E-E2BC-4F86-9F10-1DB69A74F4EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
