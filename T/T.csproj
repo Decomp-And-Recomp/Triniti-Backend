@@ -4,8 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>x64;x86</Platforms>
-    <OutputPath>..\_Output\$(Configuration)\$(Platform)\</OutputPath>
+    <OutputPath>..\_Output\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
@@ -17,7 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\T.Database\T.Database.csproj" />
     <ProjectReference Include="..\T.MySql\T.MySql.csproj" />
-    <ProjectReference Include="..\T.SQLite\T.SQLite.csproj" />
   </ItemGroup>
 
 </Project>
