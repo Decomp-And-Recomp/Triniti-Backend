@@ -10,7 +10,7 @@ Its mainly for Call of Mini games, if you want to host the multiplayer servers, 
 |[Call of Mini Dino Hunter](https://github.com/Decomp-And-Recomp/Call-Of-Mini-Dino-Hunter)|Finished|
 
 ## Configuration
-In order to run the servers, you currently need MySQL database installed. However, SQLite support is planned.
+In order to run the servers, you currently need MySQL database installed.
 
 ### General
 |name|description|default|acceptable values|
@@ -22,7 +22,7 @@ In order to run the servers, you currently need MySQL database installed. Howeve
 ### Database
 |name|description|default|acceptable values|
 |----|-----------|-------|-----------------|
-|`type`|A database used.|`"MySQL"`|`"MySQL"`, `"SQLite"`|
+|`type`|A database used.|`"MySQL"`|`"MySQL"`|
 |`server`|A server where the database is hosted on.|`"127.0.0.1"`|ip (string)|
 |`port`|A port where the database is hosted on.|`3306`|integer|
 |`userId`|A user id to access the database.|`"root"`|string|
@@ -42,11 +42,6 @@ Discord configuration allows you to use your Discord bot to control the servers.
 |name|description|default|acceptable values|
 |----|-----------|-------|-----------------|
 |`maxLeaderboardReturnAmount`|Allows you to set the amount of leaderboard entries the server sends to the client when requested.|`200`|integer|
-
-## Branches
-This repository has 2 branches, `main` and `dev`.  
-`main` branch is a stable branch that was tested and used.  
-`dev` branch is for newest features and fixes, but it was not tested, meaning it may crash or simply break, and shouldnt be used on production.
 
 ## Credits
 [overmet15](https://github.com/overmet15) - Lead Developer.
