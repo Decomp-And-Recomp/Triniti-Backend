@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.18.0" />
+    <PackageReference Include="DotnetBadWordDetector" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

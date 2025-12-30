@@ -49,17 +49,17 @@ public static class DinoHunterHelper
 
     public static async Task Filter(LeaderboardEntry entry)
     {
-        entry.nickname = await DB.filterDatabase.Filter(entry.nickname);
+        entry.nickname = ProfanityHelper.Filter(entry.nickname);
     }
 
     public static async Task Filter(AccountEntry entry)
     {
-        entry.nickname = await DB.filterDatabase.Filter(entry.nickname);
+        entry.nickname = ProfanityHelper.Filter(entry.nickname);
 
         string? motto = entry.GetMottoFromExts();
 
-        string? filteredMotto = await DB.filterDatabase.Filter(motto);
+        string filteredMotto = ProfanityHelper.Filter(motto);
 
-        if (motto != filteredMotto) entry.SetMottoToExts(filteredMotto ?? string.Empty);
+        if (motto != filteredMotto) entry.SetMottoToExts(filteredMotto);
     }
 }

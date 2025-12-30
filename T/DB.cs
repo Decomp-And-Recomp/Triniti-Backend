@@ -9,7 +9,6 @@ public static class DB
 {
     public static DatabaseController current = null!;
 
-    public static FilterDatabase filterDatabase => current.filterDatabase;
     public static BanDatabase banDatabase => current.banDatabase;
     public static DinoHunterDatabase dinoHunterDatabase => current.dinoHunterDatabase;
     public static GameConfigDatabase gameConfigDatabase => current.gameConfigDatabase;
