@@ -13,7 +13,7 @@ public class Discord
         GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
     });
 
-    static ConcurrentQueue<string>? logQueue;
+    static ConcurrentQueue<(DateTime, byte[])>? logQueue;
     static System.Timers.Timer? logTimer;
 
     public static async Task Run()
@@ -94,7 +94,7 @@ public class Discord
         }
         catch (Exception ex)
         {
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 
@@ -159,7 +159,7 @@ public class Discord
         catch (Exception ex)
         {
             await cmd.RespondAsync("An exception occured on the server.", ephemeral: true);
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 
@@ -186,7 +186,7 @@ public class Discord
     {
         if (logQueue == null) return;
         if (string.IsNullOrWhiteSpace(message)) return;
-        logQueue.Enqueue(message);
+        logQueue.Enqueue((DateTime.Now, System.Text.Encoding.UTF8.GetBytes(message)));
     }
 
     static async Task FlushLogQueue()
@@ -200,17 +200,16 @@ public class Discord
             var channel = await client.GetChannelAsync(Config.Discord.loggingChannelId);
             if (channel is not IMessageChannel msgChannel) return;
 
-            if (logQueue.TryDequeue(out var message))
+            if (logQueue.TryDequeue(out var v))
             {
-                if (message.Length > 1900)
-                    message = message[..1900] + "...";
+                using MemoryStream stream = new(v.Item2);
 
-                await msgChannel.SendMessageAsync($"```{message}```");
+                await msgChannel.SendFileAsync(stream, filename: $"{v.Item1.Year}_{v.Item1.Month}_{v.Item1.Day}_{v.Item1.Hour}:{v.Item1.Minute}:{v.Item1.Second}.txt");
             }
         }
         catch (Exception ex)
         {
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 }

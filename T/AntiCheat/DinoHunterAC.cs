@@ -57,7 +57,7 @@ public static class DinoHunterAC
         }
         catch (Exception e)
         {
-            Logger.LogException(e);
+            Logger.Exception(e);
         }
     }
 }
