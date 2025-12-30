@@ -1,7 +1,6 @@
 ﻿using T.Database;
 using T.MySql;
 using T.Logging;
-using T.SQLite;
 
 namespace T;
 
@@ -17,7 +16,6 @@ public static class DB
     {
         switch (Config.Database.type)
         {
-            case Config.Database.Type.SQLite: current = new SQLiteDatabase(); break;
             case Config.Database.Type.MySQL: current = new MySqlDatabase(); break;
         }
 

@@ -4,7 +4,7 @@ namespace T;
 
 public static class Program
 {
-    const string release = "1.1.0";
+    const string release = "1.2.0";
 
     public static async Task Main(string[] args)
     {
@@ -16,6 +16,10 @@ public static class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         Console.CursorVisible = false;
+        // Hide user input
+        _ = Task.Run(() => {
+            while (true) _ = Console.ReadKey(true);
+            });
 
         SetupCrashCatch();
 

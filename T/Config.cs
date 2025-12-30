@@ -16,7 +16,7 @@ public static class Config
 
     public static class Database
     {
-        public enum Type { MySQL, SQLite }
+        public enum Type { MySQL }
 
         public static Type type;
 
@@ -106,7 +106,6 @@ public static class Config
         database["type"] = Database.type switch
         {
             Database.Type.MySQL => (JsonNode)"MySQL",
-            Database.Type.SQLite => (JsonNode)"SQLite",
             _ => (JsonNode)"undefined",
         };
 
@@ -151,8 +150,7 @@ public static class Config
         Database.type = databaseType switch
         {
             "MySQL" => Database.Type.MySQL,
-            "SQLite" => Database.Type.SQLite,
-            _ => throw new Exception($"{databaseType} is unacceptable value. Only 'MySQL' and 'SQLite' are supported"),
+            _ => throw new Exception($"{databaseType} is unacceptable value. Only 'MySQL' is currently supported"),
         };
         Database.server = GetNode(database, "server").GetValue<string>();
         Database.port = GetNode(database, "port").GetValue<int>();
