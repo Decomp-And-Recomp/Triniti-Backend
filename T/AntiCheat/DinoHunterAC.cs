@@ -8,7 +8,7 @@ public static class DinoHunterAC
 {
     public static async Task ProcessLeaderboard(LeaderboardEntry account)
     {
-        if (!Config.General.enableAntiCheat) return;
+        if (!Config.General.EnableAntiCheat) return;
 
         try
         {
@@ -31,7 +31,7 @@ public static class DinoHunterAC
             if (account.crystal > 1250) Add($"Crystal Amount: {account.crystal}");
             if (account.hunterLv > 250) Add($"Hunter Level: {account.hunterLv}");
 
-            var oldEntry = await DB.dinoHunterDatabase.FromLeaderboard(account.userId);
+            var oldEntry = await DB.DinoHunterDatabase.FromLeaderboard(account.userId);
 
             if (oldEntry != null)
             {

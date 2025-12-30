@@ -5,7 +5,7 @@ namespace T.MySql;
 
 public class MySqlDatabase : DatabaseController
 {
-    string connectionString = string.Empty;
+    private string connectionString = string.Empty;
 
     public MySqlDatabase()
     {

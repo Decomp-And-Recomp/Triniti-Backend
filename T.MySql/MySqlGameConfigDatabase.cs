@@ -26,10 +26,12 @@ public class MySqlGameConfigDatabase : GameConfigDatabase
 
         while (reader.Read())
         {
-            GameConfig result = new();
-            result.ip = reader["ip"].ToString()!;
-            result.port = Convert.ToInt32(reader["port"]);
-            result.version = reader["version"].ToString()!;
+            GameConfig result = new()
+            {
+                ip = reader["ip"].ToString()!,
+                port = Convert.ToInt32(reader["port"]),
+                version = reader["version"].ToString()!
+            };
 
             return result;
         }

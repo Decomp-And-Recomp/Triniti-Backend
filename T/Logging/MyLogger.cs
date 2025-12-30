@@ -1,5 +1,4 @@
-﻿
-namespace T.Logging;
+﻿namespace T.Logging;
 
 /// <summary>
 /// Logger redirecting everything to <see cref="Logger"/>

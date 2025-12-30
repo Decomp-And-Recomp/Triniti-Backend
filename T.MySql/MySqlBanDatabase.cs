@@ -5,7 +5,7 @@ namespace T.MySql;
 
 public class MySqlBanDatabase : BanDatabase
 {
-    readonly MySqlDatabase controller;
+    private readonly MySqlDatabase controller;
 
     public MySqlBanDatabase(MySqlDatabase controller)
     {

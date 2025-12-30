@@ -6,7 +6,7 @@ public class Middleware(RequestDelegate request)
     {
         try
         {
-            if (await DB.current.banDatabase.IsIpBanned(Utils.GetIp(context)))
+            if (await DB.Current.banDatabase.IsIpBanned(Utils.GetIp(context)))
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsync("Forbidden: Your IP is banned or cant be detected (server issue).");

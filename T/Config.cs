@@ -5,39 +5,39 @@ namespace T;
 
 public static class Config
 {
-    static string configPath = "Configs/config.json";
+    private static string ConfigPath = "Configs/config.json";
 
     public static class General
     {
-        public static string hostUrl = string.Empty;
-        public static string encryptionKey = string.Empty;
-        public static bool enableAntiCheat;
+        public static string HostUrl = string.Empty;
+        public static string EncryptionKey = string.Empty;
+        public static bool EnableAntiCheat;
     }
 
     public static class Database
     {
-        public enum Type { MySQL }
+        public enum DatabaseType { MySQL }
 
-        public static Type type;
+        public static DatabaseType Type;
 
-        public static string server = string.Empty;
-        public static int port;
-        public static string userId = string.Empty;
-        public static string password = string.Empty;
-        public static string databaseName = string.Empty;
+        public static string Server = string.Empty;
+        public static int Port;
+        public static string UserId = string.Empty;
+        public static string Password = string.Empty;
+        public static string DatabaseName = string.Empty;
     }
 
     public static class Discord
     {
-        public static string token = string.Empty;
-        public static ulong serverId;
-        public static ulong loggingChannelId;
-        public static List<ulong> allowedRoles = [];
+        public static string Token = string.Empty;
+        public static ulong ServerId;
+        public static ulong LoggingChannelId;
+        public static List<ulong> AllowedRoles = [];
     }
 
     public static class DinoHunter
     {
-        public static int maxLeaderboardReturnAmount;
+        public static int MaxLeaderboardReturnAmount;
     }
 
     public static async Task Initialize()
@@ -46,13 +46,13 @@ public static class Config
 
         if (string.IsNullOrEmpty(assemblyPath)) throw new Exception("Error loading configs, assembly path is null.");
 
-        configPath = Path.Combine(Path.GetDirectoryName(assemblyPath)!, configPath);
+        ConfigPath = Path.Combine(Path.GetDirectoryName(assemblyPath)!, ConfigPath);
 
-        string configDirectory = Path.GetDirectoryName(configPath)!;
+        string configDirectory = Path.GetDirectoryName(ConfigPath)!;
 
         if (!Directory.Exists(configDirectory)) Directory.CreateDirectory(configDirectory);
 
-        if (!File.Exists(configPath))
+        if (!File.Exists(ConfigPath))
         {
             Logger.Warning("Config file not found, creating default one.");
             SetDefaults();
@@ -65,24 +65,24 @@ public static class Config
 
     public static void SetDefaults()
     {
-        General.hostUrl = "http://127.0.0.1:7125";
-        General.encryptionKey = "ExampleKey";
-        General.enableAntiCheat = false;
+        General.HostUrl = "http://127.0.0.1:7125";
+        General.EncryptionKey = "ExampleKey";
+        General.EnableAntiCheat = false;
 
-        Database.type = Database.Type.MySQL;
+        Database.Type = Database.DatabaseType.MySQL;
 
-        Database.server = "127.0.0.1";
-        Database.port = 3306;
-        Database.userId = "root";
-        Database.password = string.Empty;
-        Database.databaseName = "Triniti";
+        Database.Server = "127.0.0.1";
+        Database.Port = 3306;
+        Database.UserId = "root";
+        Database.Password = string.Empty;
+        Database.DatabaseName = "Triniti";
 
-        Discord.token = string.Empty;
-        Discord.serverId = 0;
-        Discord.loggingChannelId = 0;
-        Discord.allowedRoles.Clear();
+        Discord.Token = string.Empty;
+        Discord.ServerId = 0;
+        Discord.LoggingChannelId = 0;
+        Discord.AllowedRoles.Clear();
 
-        DinoHunter.maxLeaderboardReturnAmount = 200;
+        DinoHunter.MaxLeaderboardReturnAmount = 200;
     }
 
     public static async Task Save()
@@ -99,37 +99,37 @@ public static class Config
         index["discord"] = discord;
         index["dinoHunter"] = dinoHunter;
 
-        general["hostUrl"] = General.hostUrl;
-        general["encryptionKey"] = General.encryptionKey;
-        general["enableAntiCheat"] = General.enableAntiCheat;
+        general["hostUrl"] = General.HostUrl;
+        general["encryptionKey"] = General.EncryptionKey;
+        general["enableAntiCheat"] = General.EnableAntiCheat;
 
-        database["type"] = Database.type switch
+        database["type"] = Database.Type switch
         {
-            Database.Type.MySQL => (JsonNode)"MySQL",
+            Database.DatabaseType.MySQL => (JsonNode)"MySQL",
             _ => (JsonNode)"undefined",
         };
 
-        database["server"] = Database.server;
-        database["port"] = Database.port;
-        database["userId"] = Database.userId;
-        database["password"] = Database.password;
-        database["databaseName"] = Database.databaseName;
+        database["server"] = Database.Server;
+        database["port"] = Database.Port;
+        database["userId"] = Database.UserId;
+        database["password"] = Database.Password;
+        database["databaseName"] = Database.DatabaseName;
 
-        discord["token"] = Discord.token;
-        discord["serverId"] = Discord.serverId;
-        discord["loggingChannelId"] = Discord.loggingChannelId;
+        discord["token"] = Discord.Token;
+        discord["serverId"] = Discord.ServerId;
+        discord["loggingChannelId"] = Discord.LoggingChannelId;
         
-        JsonArray allowedRoles = [.. Discord.allowedRoles];
+        JsonArray allowedRoles = [.. Discord.AllowedRoles];
         discord["allowedRoles"] = allowedRoles;
 
-        dinoHunter["maxLeaderboardReturnAmount"] = DinoHunter.maxLeaderboardReturnAmount;
+        dinoHunter["maxLeaderboardReturnAmount"] = DinoHunter.MaxLeaderboardReturnAmount;
 
-        await File.WriteAllTextAsync(configPath, index.ToJsonString(new System.Text.Json.JsonSerializerOptions() { WriteIndented = true }));
+        await File.WriteAllTextAsync(ConfigPath, index.ToJsonString(new System.Text.Json.JsonSerializerOptions() { WriteIndented = true }));
     }
 
     public static async Task Load()
     {
-        string configFile = await File.ReadAllTextAsync(configPath);
+        string configFile = await File.ReadAllTextAsync(ConfigPath);
 
         JsonNode index = JsonNode.Parse(configFile)
             ?? throw new Exception("Unable to parse config file: Make sure its a valid JSON.");
@@ -140,23 +140,23 @@ public static class Config
         JsonNode? dinoHunter = GetNode(index, "dinoHunter");
 
         // General
-        General.hostUrl = GetNode(general, "hostUrl").GetValue<string>();
-        General.encryptionKey = GetNode(general, "encryptionKey").GetValue<string>();
-        General.enableAntiCheat = GetNode(general, "enableAntiCheat").GetValue<bool>();
+        General.HostUrl = GetNode(general, "hostUrl").GetValue<string>();
+        General.EncryptionKey = GetNode(general, "encryptionKey").GetValue<string>();
+        General.EnableAntiCheat = GetNode(general, "enableAntiCheat").GetValue<bool>();
 
         // Database
         string databaseType = GetNode(database, "type").GetValue<string>();
 
-        Database.type = databaseType switch
+        Database.Type = databaseType switch
         {
-            "MySQL" => Database.Type.MySQL,
+            "MySQL" => Database.DatabaseType.MySQL,
             _ => throw new Exception($"{databaseType} is unacceptable value. Only 'MySQL' is currently supported"),
         };
-        Database.server = GetNode(database, "server").GetValue<string>();
-        Database.port = GetNode(database, "port").GetValue<int>();
-        Database.userId = GetNode(database, "userId").GetValue<string>();
-        Database.password = GetNode(database, "password").GetValue<string>();
-        Database.databaseName = GetNode(database, "databaseName").GetValue<string>();
+        Database.Server = GetNode(database, "server").GetValue<string>();
+        Database.Port = GetNode(database, "port").GetValue<int>();
+        Database.UserId = GetNode(database, "userId").GetValue<string>();
+        Database.Password = GetNode(database, "password").GetValue<string>();
+        Database.DatabaseName = GetNode(database, "databaseName").GetValue<string>();
 
         // Discord
         JsonArray allowedRoleIds = (JsonArray)GetNode(discord, "allowedRoles");
@@ -165,17 +165,17 @@ public static class Config
         {
             if (v == null) throw new Exception("An entry in allowedUsers is null.");
 
-            Discord.allowedRoles.Add(v.GetValue<ulong>());
+            Discord.AllowedRoles.Add(v.GetValue<ulong>());
         }
 
-        Discord.serverId = GetNode(discord, "serverId").GetValue<ulong>();
-        Discord.token = GetNode(discord, "token").GetValue<string>();
-        Discord.loggingChannelId = GetNode(discord, "loggingChannelId").GetValue<ulong>();
+        Discord.ServerId = GetNode(discord, "serverId").GetValue<ulong>();
+        Discord.Token = GetNode(discord, "token").GetValue<string>();
+        Discord.LoggingChannelId = GetNode(discord, "loggingChannelId").GetValue<ulong>();
 
                                 // Games
         // DinoHunter
-        DinoHunter.maxLeaderboardReturnAmount = GetNode(dinoHunter, "maxLeaderboardReturnAmount").GetValue<int>();
-        if (DinoHunter.maxLeaderboardReturnAmount < 0) throw new Exception("maxLeaderboardReturnAmount CAN NOT be negative.");
+        DinoHunter.MaxLeaderboardReturnAmount = GetNode(dinoHunter, "maxLeaderboardReturnAmount").GetValue<int>();
+        if (DinoHunter.MaxLeaderboardReturnAmount < 0) throw new Exception("maxLeaderboardReturnAmount CAN NOT be negative.");
     }
 
     static JsonNode GetNode(JsonNode from, string node)
