@@ -38,10 +38,10 @@ public class MiscController : ControllerBase
     {
         string body = await Utils.ReadEncryptedBody(Request);
 
-        var config = await DB.gameConfigDatabase.GetGameConfig(body);
+        var config = await DB.GameConfigDatabase.GetGameConfig(body);
 
         if (config == null) return BadRequest();
 
-        return Ok(XXTEAUtils.Encrypt($"{config.ip}|{config.port}|{config.version}", Config.General.encryptionKey));
+        return Ok(XXTEAUtils.Encrypt($"{config.ip}|{config.port}|{config.version}", Config.General.EncryptionKey));
     }
 }

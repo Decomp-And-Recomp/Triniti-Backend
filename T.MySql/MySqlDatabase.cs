@@ -5,12 +5,11 @@ namespace T.MySql;
 
 public class MySqlDatabase : DatabaseController
 {
-    string connectionString = string.Empty;
+    private string connectionString = string.Empty;
 
     public MySqlDatabase()
     {
         banDatabase = new MySqlBanDatabase(this);
-        filterDatabase = new MySqlFilterDatabase(this);
         dinoHunterDatabase = new MySqlDinoHunterDatabase(this);
         gameConfigDatabase = new MySqlGameConfigDatabase(this);
     }
@@ -65,11 +64,6 @@ public class MySqlDatabase : DatabaseController
         result.Append("`crystal` INT NOT NULL,");
         result.Append("`gold` INT NOT NULL,");
         result.Append("`applause` INT NOT NULL");
-        result.Append(");"); // closing
-
-        result.AppendLine("CREATE TABLE IF NOT EXISTS `filter`");
-        result.Append('('); // opening
-        result.Append("`badword` VARCHAR(12) NOT NULL");
         result.Append(");"); // closing
 
         result.AppendLine("CREATE TABLE IF NOT EXISTS `ip_bans`");

@@ -4,7 +4,7 @@ namespace T;
 
 public static class Program
 {
-    const string release = "1.1.0";
+    private const string release = "1.2.0";
 
     public static async Task Main(string[] args)
     {
@@ -16,6 +16,10 @@ public static class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         Console.CursorVisible = false;
+        // Hide user input
+        _ = Task.Run(() => {
+            while (true) _ = Console.ReadKey(true);
+            });
 
         SetupCrashCatch();
 
@@ -28,7 +32,7 @@ public static class Program
         GetApp(args).Run();
     }
 
-    static void SetupCrashCatch()
+    private static void SetupCrashCatch()
     {
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
@@ -45,10 +49,10 @@ public static class Program
         };
     }
 
-    static WebApplication GetApp(string[] args)
+    private static WebApplication GetApp(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.UseUrls(Config.General.hostUrl);
+        builder.WebHost.UseUrls(Config.General.HostUrl);
 
         builder.Services.AddControllers();
 

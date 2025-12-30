@@ -19,11 +19,11 @@ public class DinoHunterController : ControllerBase
         var entry = DinoHunterHelper.AccountEntryFromJson(data, Utils.GetIp(Request.HttpContext));
         if (entry == null) return BadRequest("Unable to parse the request data.");
 
-        if (await DB.banDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
+        if (await DB.BanDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
 
         await DinoHunterHelper.Filter(entry);
 
-        await DB.dinoHunterDatabase.SaveUser(entry);
+        await DB.DinoHunterDatabase.SaveUser(entry);
 
         return Ok();
     }
@@ -37,9 +37,9 @@ public class DinoHunterController : ControllerBase
         string? userid = JsonNode.Parse(data)?["userId"]?.GetValue<string>();
         if (string.IsNullOrWhiteSpace(userid)) return BadRequest();
 
-        if (await DB.banDatabase.IsHWIDBanned(userid)) return Forbid("The user is banned.");
+        if (await DB.BanDatabase.IsHWIDBanned(userid)) return Forbid("The user is banned.");
 
-        var entry = await DB.dinoHunterDatabase.LoadUser(userid);
+        var entry = await DB.DinoHunterDatabase.LoadUser(userid);
 
         if (entry == null) return BadRequest();
 
@@ -55,13 +55,13 @@ public class DinoHunterController : ControllerBase
         var entry = DinoHunterHelper.LeaderboardEntryFromJson(data);
         if (entry == null) return BadRequest();
 
-        if (await DB.banDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
+        if (await DB.BanDatabase.IsHWIDBanned(entry.userId)) return Forbid("The user is banned.");
 
         await DinoHunterHelper.Filter(entry);
 
         await DinoHunterAC.ProcessLeaderboard(entry);
 
-        await DB.dinoHunterDatabase.InsertLeaderboard(entry);
+        await DB.DinoHunterDatabase.InsertLeaderboard(entry);
 
         return Ok();
     }
@@ -75,14 +75,14 @@ public class DinoHunterController : ControllerBase
 
         string? userId = JsonNode.Parse(data)?["userId"]?.GetValue<string>();
         
-        if (await DB.banDatabase.IsHWIDBanned(userId)) return Forbid("The user is banned.");
+        if (await DB.BanDatabase.IsHWIDBanned(userId)) return Forbid("The user is banned.");
 
         JsonObject resultIndex = new()
         {
             ["code"] = "0",
             ["leaderboards"] = EntryListToLeadeboard(
-                await DB.dinoHunterDatabase.ListLeaderboard(Config.DinoHunter.maxLeaderboardReturnAmount)),
-            ["myrank"] = await DB.dinoHunterDatabase.GetPlaceFor(userId)
+                await DB.DinoHunterDatabase.ListLeaderboard(Config.DinoHunter.MaxLeaderboardReturnAmount)),
+            ["myrank"] = await DB.DinoHunterDatabase.GetPlaceFor(userId)
         };
 
         return Content(Utils.Encrypt(resultIndex.ToJsonString()));

@@ -45,7 +45,7 @@ public static class DinoHunterExtensions
 
             Logger.Log(extsConvert);
             Logger.Log(entry.exts);
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
 
         return "Internal Error";
@@ -80,7 +80,7 @@ public static class DinoHunterExtensions
 
             Logger.Log(extsConvert);
             Logger.Log(entry.exts);
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 }

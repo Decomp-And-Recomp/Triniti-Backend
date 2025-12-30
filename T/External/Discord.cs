@@ -8,68 +8,68 @@ namespace T.External;
 
 public class Discord
 {
-    static readonly DiscordSocketClient client = new(new DiscordSocketConfig
+    private static readonly DiscordSocketClient Client = new(new DiscordSocketConfig
     {
         GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
     });
 
-    static ConcurrentQueue<string>? logQueue;
-    static System.Timers.Timer? logTimer;
+    private static ConcurrentQueue<(DateTime, byte[])>? LogQueue;
+    private static System.Timers.Timer? LogTimer;
 
     public static async Task Run()
     {
-        if (string.IsNullOrWhiteSpace(Config.Discord.token))
+        if (string.IsNullOrWhiteSpace(Config.Discord.Token))
         {
             Logger.Warning("Could not initialize Discord bot: Empty Token");
             return;
         }
 
-        if (Config.Discord.serverId == 0)
+        if (Config.Discord.ServerId == 0)
         {
             Logger.Warning("Could not initialize Discord bot: serverId cannot be 0");
             return;
         }
 
-        if (Config.Discord.loggingChannelId == 0)
+        if (Config.Discord.LoggingChannelId == 0)
         {
             Logger.Warning("Discord logging disabled: loggingChannelId cannot be 0");
         }
         else
         {
-            logTimer = new(800);
-            logQueue = new();
+            LogTimer = new(800);
+            LogQueue = new();
         }
 
-        if (Config.Discord.allowedRoles.Count == 0)
+        if (Config.Discord.AllowedRoles.Count == 0)
         {
             Logger.Warning("Could not initialize Discord bot: allowedRoles is empty.");
             return;
         }
 
-        client.Ready += OnReady;
-        client.Log += OnDiscordLog;
-        client.InteractionCreated += OnInteraction;
+        Client.Ready += OnReady;
+        Client.Log += OnDiscordLog;
+        Client.InteractionCreated += OnInteraction;
 
-        await client.LoginAsync(TokenType.Bot, Config.Discord.token);
-        await client.StartAsync();
+        await Client.LoginAsync(TokenType.Bot, Config.Discord.Token);
+        await Client.StartAsync();
     }
 
-    static async Task OnReady()
+    private static async Task OnReady()
     {
         try
         {
-            if (logTimer != null)
+            if (LogTimer != null)
             {
-                logTimer.Elapsed += async (_, _) => await FlushLogQueue();
-                logTimer.AutoReset = true;
-                logTimer.Start();
+                LogTimer.Elapsed += async (_, _) => await FlushLogQueue();
+                LogTimer.AutoReset = true;
+                LogTimer.Start();
             }
 
-            var guild = client.GetGuild(Config.Discord.serverId);
+            var guild = Client.GetGuild(Config.Discord.ServerId);
 
             if (guild == null)
             {
-                Logger.Warning($"A guild with id '{Config.Discord.serverId}' cannot be found.");
+                Logger.Warning($"A guild with id '{Config.Discord.ServerId}' cannot be found.");
                 return;
             }
 
@@ -94,15 +94,15 @@ public class Discord
         }
         catch (Exception ex)
         {
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 
-    static async Task OnInteraction(SocketInteraction interaction)
+    private static async Task OnInteraction(SocketInteraction interaction)
     {
         if (interaction is not SocketSlashCommand cmd) return;
 
-        if (interaction.GuildId != Config.Discord.serverId)
+        if (interaction.GuildId != Config.Discord.ServerId)
         {
             await cmd.RespondAsync("Server id does not match one in the config. Please set a proper ID in the config.");
             return;
@@ -114,7 +114,7 @@ public class Discord
 
         foreach (var v in user.Roles)
         {
-            if (!Config.Discord.allowedRoles.Contains(v.Id)) continue;
+            if (!Config.Discord.AllowedRoles.Contains(v.Id)) continue;
 
             allowed = true;
             break;
@@ -146,12 +146,12 @@ public class Discord
                     return;
                 case "ban-ip":
                     string ip = (string)cmd.Data.Options.First(f => f.Name == "ip").Value;
-                    await DB.banDatabase.BanIp(ip);
+                    await DB.BanDatabase.BanIp(ip);
                     await cmd.RespondAsync("Done.");
                     return;
                 case "ban-hwid":
                     string hwid = (string)cmd.Data.Options.First(f => f.Name == "ip").Value;
-                    await DB.banDatabase.BanHWID(hwid);
+                    await DB.BanDatabase.BanHWID(hwid);
                     await cmd.RespondAsync("Done.");
                     return;
             }
@@ -159,11 +159,11 @@ public class Discord
         catch (Exception ex)
         {
             await cmd.RespondAsync("An exception occured on the server.", ephemeral: true);
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 
-    static Task OnDiscordLog(LogMessage msg)
+    private static Task OnDiscordLog(LogMessage msg)
     {
         LogLevel logLevel;
 
@@ -184,33 +184,32 @@ public class Discord
 
     public static void Log(string? message)
     {
-        if (logQueue == null) return;
+        if (LogQueue == null) return;
         if (string.IsNullOrWhiteSpace(message)) return;
-        logQueue.Enqueue(message);
+        LogQueue.Enqueue((DateTime.Now, System.Text.Encoding.UTF8.GetBytes(message)));
     }
 
-    static async Task FlushLogQueue()
+    private static async Task FlushLogQueue()
     {
-        if (logQueue!.IsEmpty) return;
+        if (LogQueue!.IsEmpty) return;
 
         try
         {
-            if (client.LoginState != LoginState.LoggedIn) return;
+            if (Client.LoginState != LoginState.LoggedIn) return;
 
-            var channel = await client.GetChannelAsync(Config.Discord.loggingChannelId);
+            var channel = await Client.GetChannelAsync(Config.Discord.LoggingChannelId);
             if (channel is not IMessageChannel msgChannel) return;
 
-            if (logQueue.TryDequeue(out var message))
+            if (LogQueue.TryDequeue(out var v))
             {
-                if (message.Length > 1900)
-                    message = message[..1900] + "...";
+                using MemoryStream stream = new(v.Item2);
 
-                await msgChannel.SendMessageAsync($"```{message}```");
+                await msgChannel.SendFileAsync(stream, filename: $"{v.Item1.Year}_{v.Item1.Month}_{v.Item1.Day}_{v.Item1.Hour}:{v.Item1.Minute}:{v.Item1.Second}.txt");
             }
         }
         catch (Exception ex)
         {
-            Logger.LogException(ex);
+            Logger.Exception(ex);
         }
     }
 }

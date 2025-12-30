@@ -1,5 +1,4 @@
-﻿
-namespace T.Logging;
+﻿namespace T.Logging;
 
 /// <summary>
 /// Logger redirecting everything to <see cref="Logger"/>
@@ -22,7 +21,7 @@ public class MyLogger : ILogger
     {
         if (exception != null)
         {
-            Logger.LogException(exception);
+            Logger.Exception(exception);
             return;
         }
 

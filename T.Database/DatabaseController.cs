@@ -3,7 +3,6 @@
 public abstract class DatabaseController
 {
     public BanDatabase banDatabase { get; protected set; } = null!;
-    public FilterDatabase filterDatabase { get; protected set; } = null!;
     public DinoHunterDatabase dinoHunterDatabase { get; protected set; } = null!;
     public GameConfigDatabase gameConfigDatabase { get; protected set; } = null!;
 

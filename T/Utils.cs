@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using T.External;
 
 namespace T;
@@ -31,15 +30,15 @@ public static class Utils
         StreamReader reader = new(request.Body);
         string data = await reader.ReadToEndAsync();
 
-        if (string.IsNullOrWhiteSpace(Config.General.encryptionKey)) return data;
+        if (string.IsNullOrWhiteSpace(Config.General.EncryptionKey)) return data;
 
-        return XXTEAUtils.Decrypt(data, Config.General.encryptionKey);
+        return XXTEAUtils.Decrypt(data, Config.General.EncryptionKey);
     }
 
     public static string Encrypt(string str)
     {
-        if (string.IsNullOrWhiteSpace(Config.General.encryptionKey)) return str;
+        if (string.IsNullOrWhiteSpace(Config.General.EncryptionKey)) return str;
 
-        return XXTEAUtils.Encrypt(str, Config.General.encryptionKey);
+        return XXTEAUtils.Encrypt(str, Config.General.EncryptionKey);
     }
 }
