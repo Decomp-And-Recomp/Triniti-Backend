@@ -8,6 +8,6 @@ public static class ProfanityHelper
 
 	public static string Filter(string? content)
 	{
-		return Detector.MaskProfanity(content);
+		return content ?? "";
 	}
 }
